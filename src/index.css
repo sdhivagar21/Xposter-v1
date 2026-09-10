@@ -1,0 +1,166 @@
+@import url("https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap");
+@import "tailwindcss";
+
+:root {
+  --xp-bg: #0a0a0a;
+  --xp-bg-elevated: #131313;
+  --xp-white: #fafafa;
+  --xp-muted: #8f8f8f;
+  --xp-border: #2b2b2b;
+  --xp-border-strong: #454545;
+}
+
+* {
+  border-color: var(--xp-border);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--xp-bg);
+  color: var(--xp-white);
+  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-display {
+  font-family: "Anton", "Inter", sans-serif;
+  letter-spacing: 0.01em;
+}
+
+/* Visible keyboard focus, kept consistent across the grayscale palette */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--xp-white);
+  outline-offset: 2px;
+}
+
+/* Film grain overlay — a fixed, fully-decorative noise layer for premium texture */
+.film-grain {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Hero entrance */
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-hero-rise {
+  animation: hero-rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Subtle glow/pulse behind the hero */
+@keyframes glow-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.06);
+  }
+}
+
+.animate-glow-pulse {
+  animation: glow-pulse 6s ease-in-out infinite;
+}
+
+/* Infinite marquee scroll for the poster wall rows */
+@keyframes marquee-left {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes marquee-right {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.animate-marquee-left {
+  animation: marquee-left 38s linear infinite;
+}
+
+.animate-marquee-right {
+  animation: marquee-right 34s linear infinite;
+}
+
+.marquee-row:hover .animate-marquee-left,
+.marquee-row:hover .animate-marquee-right {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-hero-rise,
+  .animate-glow-pulse,
+  .animate-marquee-left,
+  .animate-marquee-right {
+    animation: none !important;
+  }
+}
+
+/* Thin custom scrollbar for horizontal rails */
+.rail::-webkit-scrollbar {
+  height: 6px;
+}
+
+.rail::-webkit-scrollbar-thumb {
+  background: var(--xp-border-strong);
+  border-radius: 999px;
+}
+
+/* Broken image fallback styling — mock products reference filenames that
+   don't exist on disk yet, so this keeps the layout graceful instead of
+   showing a browser broken-image icon. */
+.poster-frame {
+  position: relative;
+  background: var(--xp-bg-elevated);
+  border: 1px solid var(--xp-border);
+}
+
+.poster-frame img {
+  display: block;
+}
+
+.poster-frame img.broken {
+  opacity: 0;
+}
+
+.poster-fallback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1rem;
+  color: var(--xp-muted);
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
