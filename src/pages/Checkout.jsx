@@ -1,20 +1,19 @@
 import { useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext.jsx";
+import { placeOrder } from "../api/orders.js";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_RE = /^\d{10}$/;
 
-function generateOrderId() {
-  return `XP-${Date.now().toString(36).toUpperCase()}`;
-}
-
 export default function Checkout() {
-  const { items, subtotal, clearCart } = useCart();
+  const { items, subtotal } = useCart();
   const navigate = useNavigate();
 
   const [form, setForm] = useState({ name: "", email: "", phone: "", address: "" });
   const [errors, setErrors] = useState({});
+  const [submitting, setSubmitting] = useState(false);
+  const [serverError, setServerError] = useState(null);
 
   if (items.length === 0) {
     return <Navigate to="/" replace />;
@@ -34,25 +33,38 @@ export default function Checkout() {
     setForm((f) => ({ ...f, [field]: value }));
   }
 
-  function handlePlaceOrder(e) {
+  async function handlePlaceOrder(e) {
     e.preventDefault();
     if (!validate()) return;
 
-    const orderId = generateOrderId();
-    const order = {
-      orderId,
-      customer: form,
-      items,
-      subtotal,
-      placedAt: new Date().toISOString(),
-    };
+    setSubmitting(true);
+    setServerError(null);
 
-    // No backend yet — this is where a real payment gateway call
-    // (Razorpay / Stripe / etc.) would run before confirming the order.
-    console.log("XPOSTERS mock order placed:", order);
+    const orderItems = items.map((item) => ({
+      product: item.id,
+      name: item.name,
+      price: item.price,
+      image: item.image,
+      qty: item.qty,
+    }));
 
-    clearCart();
-    navigate("/order-success", { state: { orderId } });
+    // PAYMENT GATEWAY INTEGRATION POINT:
+    // A real payment gateway (Razorpay, Stripe, etc.) would be called here,
+    // before the order is confirmed. For now this just saves the order to
+    // the database as "placed" with no payment actually processed.
+    try {
+      const { orderId } = await placeOrder({ customer: form, items: orderItems, subtotal });
+      // The cart is cleared by OrderSuccess itself once it has mounted on
+      // the new route — not here. Clearing it in the same tick as
+      // navigate() caused CartDrawer (mounted globally on every page) to
+      // re-render mid-transition and occasionally land back on "/" instead
+      // of the order-success page.
+      navigate("/order-success", { state: { orderId } });
+    } catch {
+      setServerError("Couldn't place your order right now — please try again in a moment.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -70,7 +82,7 @@ export default function Checkout() {
               type="text"
               value={form.name}
               onChange={(e) => handleChange("name", e.target.value)}
-              className="w-full border border-white/20 bg-transparent px-3 py-2.5 text-sm outline-none focus:border-white"
+              className="w-full border border-[var(--xp-border-strong)] bg-transparent px-3 py-2.5 text-sm outline-none focus:border-[var(--xp-accent)]"
             />
             {errors.name && <p className="mt-1 text-xs text-white/70">{errors.name}</p>}
           </div>
@@ -84,7 +96,7 @@ export default function Checkout() {
               type="email"
               value={form.email}
               onChange={(e) => handleChange("email", e.target.value)}
-              className="w-full border border-white/20 bg-transparent px-3 py-2.5 text-sm outline-none focus:border-white"
+              className="w-full border border-[var(--xp-border-strong)] bg-transparent px-3 py-2.5 text-sm outline-none focus:border-[var(--xp-accent)]"
             />
             {errors.email && <p className="mt-1 text-xs text-white/70">{errors.email}</p>}
           </div>
@@ -98,7 +110,7 @@ export default function Checkout() {
               type="tel"
               value={form.phone}
               onChange={(e) => handleChange("phone", e.target.value.replace(/[^\d]/g, "").slice(0, 10))}
-              className="w-full border border-white/20 bg-transparent px-3 py-2.5 text-sm outline-none focus:border-white"
+              className="w-full border border-[var(--xp-border-strong)] bg-transparent px-3 py-2.5 text-sm outline-none focus:border-[var(--xp-accent)]"
             />
             {errors.phone && <p className="mt-1 text-xs text-white/70">{errors.phone}</p>}
           </div>
@@ -112,22 +124,23 @@ export default function Checkout() {
               rows={3}
               value={form.address}
               onChange={(e) => handleChange("address", e.target.value)}
-              className="w-full resize-none border border-white/20 bg-transparent px-3 py-2.5 text-sm outline-none focus:border-white"
+              className="w-full resize-none border border-[var(--xp-border-strong)] bg-transparent px-3 py-2.5 text-sm outline-none focus:border-[var(--xp-accent)]"
             />
             {errors.address && <p className="mt-1 text-xs text-white/70">{errors.address}</p>}
           </div>
 
-          {/* PAYMENT GATEWAY INTEGRATION POINT:
-              Once a backend exists, this is where a real payment gateway
-              (e.g. Razorpay, Stripe) call would be triggered before the
-              order is confirmed, instead of just logging to the console. */}
+          {serverError && <p className="text-xs text-white/70">{serverError}</p>}
 
-          <button type="submit" className="w-full bg-white py-3.5 text-sm font-medium text-black transition-opacity hover:opacity-80">
-            Place order
+          <button
+            type="submit"
+            disabled={submitting}
+            className="btn-primary w-full py-3.5 text-sm font-medium"
+          >
+            {submitting ? "Placing order…" : "Place order"}
           </button>
         </form>
 
-        <aside className="h-fit border border-white/10 p-6">
+        <aside className="h-fit border border-[var(--xp-border)] p-6">
           <p className="mb-4 text-sm text-white/40">Order summary</p>
           <ul className="space-y-3">
             {items.map((item) => (
@@ -139,7 +152,7 @@ export default function Checkout() {
               </li>
             ))}
           </ul>
-          <div className="mt-5 flex justify-between border-t border-white/10 pt-4 text-base">
+          <div className="mt-5 flex justify-between border-t border-[var(--xp-border)] pt-4 text-base">
             <span>Subtotal</span>
             <span>₹{subtotal}</span>
           </div>

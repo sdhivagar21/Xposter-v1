@@ -2,12 +2,18 @@
 @import "tailwindcss";
 
 :root {
-  --xp-bg: #0a0a0a;
-  --xp-bg-elevated: #131313;
-  --xp-white: #fafafa;
-  --xp-muted: #8f8f8f;
-  --xp-border: #2b2b2b;
-  --xp-border-strong: #454545;
+  /* Warm charcoal + brass — a boutique print-gallery palette instead of
+     flat black/white. Neutrals carry the design; the accent is used
+     sparingly, on ratings, prices-on-hover, and primary actions only. */
+  --xp-bg: #0c0b09;
+  --xp-bg-elevated: #18140f;
+  --xp-white: #f3ede2;
+  --xp-muted: #a49a88;
+  --xp-border: rgba(243, 237, 226, 0.1);
+  --xp-border-strong: rgba(243, 237, 226, 0.24);
+  --xp-accent: #c9a24c;
+  --xp-accent-bright: #e2bd6c;
+  --xp-accent-dim: rgba(201, 162, 76, 0.16);
 }
 
 * {
@@ -135,13 +141,17 @@ select:focus-visible {
   border-radius: 999px;
 }
 
-/* Broken image fallback styling — mock products reference filenames that
-   don't exist on disk yet, so this keeps the layout graceful instead of
-   showing a browser broken-image icon. */
+/* Broken image fallback styling — a graceful placeholder instead of a
+   browser broken-image icon when a product's photo fails to load. */
 .poster-frame {
   position: relative;
   background: var(--xp-bg-elevated);
   border: 1px solid var(--xp-border);
+  transition: border-color 0.3s ease;
+}
+
+.group:hover .poster-frame {
+  border-color: var(--xp-accent-dim);
 }
 
 .poster-frame img {
@@ -163,4 +173,34 @@ select:focus-visible {
   color: var(--xp-muted);
   font-size: 0.75rem;
   line-height: 1.4;
+}
+
+/* Reusable button styles — gold-filled primary actions, ivory-outlined
+   secondary ones with a subtle accent hover instead of a full invert. */
+.btn-primary {
+  background: var(--xp-accent);
+  color: #0c0b09;
+  border: 1px solid var(--xp-accent);
+  transition: background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+}
+
+.btn-primary:hover {
+  background: var(--xp-accent-bright);
+  border-color: var(--xp-accent-bright);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--xp-white);
+  border: 1px solid var(--xp-border-strong);
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.btn-outline:hover {
+  border-color: var(--xp-accent);
+  color: var(--xp-accent-bright);
 }

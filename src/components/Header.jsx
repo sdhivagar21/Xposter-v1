@@ -13,7 +13,7 @@ export default function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-30 border-b border-white/10 bg-[#0a0a0a]/90 backdrop-blur">
+      <header className="sticky top-0 z-30 border-b border-[var(--xp-border)] bg-[var(--xp-bg)]/90 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
           <div className="flex items-center gap-3">
             <button
@@ -21,9 +21,9 @@ export default function Header() {
               aria-label="Open menu"
               className="flex h-9 w-9 flex-col items-center justify-center gap-[5px]"
             >
-              <span className="h-px w-5 bg-white" />
-              <span className="h-px w-5 bg-white" />
-              <span className="h-px w-5 bg-white" />
+              <span className="h-px w-5 bg-[var(--xp-white)]" />
+              <span className="h-px w-5 bg-[var(--xp-white)]" />
+              <span className="h-px w-5 bg-[var(--xp-white)]" />
             </button>
             <Link to="/" className="font-display text-2xl tracking-wide">
               XPOSTERS
@@ -49,7 +49,7 @@ export default function Header() {
                 <path d="M12 20.5s-7.5-4.6-10-9.3C0.3 7.8 2 4 5.8 4c2.2 0 3.7 1.2 4.4 2.4C10.9 5.2 12.4 4 14.6 4 18.4 4 20 7.8 18.3 11.2 15.8 15.9 12 20.5 12 20.5Z" />
               </svg>
               {wishlistCount > 0 && (
-                <span className="absolute -right-1.5 -top-1.5 grid h-4 min-w-4 place-items-center bg-white px-1 text-[10px] font-medium text-black">
+                <span className="absolute -right-1.5 -top-1.5 grid h-4 min-w-4 place-items-center bg-[var(--xp-accent)] px-1 text-[10px] font-medium text-[#0c0b09]">
                   {wishlistCount}
                 </span>
               )}
@@ -61,7 +61,7 @@ export default function Header() {
                 <path d="M9 8V6a3 3 0 0 1 6 0v2" />
               </svg>
               {itemCount > 0 && (
-                <span className="absolute -right-1.5 -top-1.5 grid h-4 min-w-4 place-items-center bg-white px-1 text-[10px] font-medium text-black">
+                <span className="absolute -right-1.5 -top-1.5 grid h-4 min-w-4 place-items-center bg-[var(--xp-accent)] px-1 text-[10px] font-medium text-[#0c0b09]">
                   {itemCount}
                 </span>
               )}

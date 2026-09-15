@@ -15,7 +15,7 @@ export default function PosterWallRow({ products, direction = "left" }) {
             to={`/product/${product.id}`}
             className="group block w-32 shrink-0 sm:w-40"
           >
-            <PosterImage category={product.category} filename={product.image} alt={product.name} />
+            <PosterImage src={product.image} alt={product.name} />
           </Link>
         ))}
       </div>

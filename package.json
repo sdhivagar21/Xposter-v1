@@ -4,9 +4,6 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "manifest": "node scripts/generateManifest.js",
-    "predev": "npm run manifest",
-    "prebuild": "npm run manifest",
     "dev": "vite",
     "build": "vite build",
     "lint": "oxlint",

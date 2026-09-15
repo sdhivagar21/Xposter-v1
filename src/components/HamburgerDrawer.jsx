@@ -12,17 +12,17 @@ export default function HamburgerDrawer({ open, onClose }) {
         aria-hidden="true"
       />
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-white/10 bg-[#0d0d0d] transition-transform duration-300 ease-out ${
+        className={`fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-[var(--xp-border)] bg-[var(--xp-bg-elevated)] transition-transform duration-300 ease-out ${
           open ? "translate-x-0" : "-translate-x-full"
         }`}
         aria-hidden={!open}
       >
-        <div className="flex items-center justify-between border-b border-white/10 px-5 py-5">
+        <div className="flex items-center justify-between border-b border-[var(--xp-border)] px-5 py-5">
           <span className="font-display text-xl">MENU</span>
           <button
             onClick={onClose}
             aria-label="Close menu"
-            className="grid h-9 w-9 place-items-center border border-white/20 text-lg transition-colors hover:bg-white hover:text-black"
+            className="grid h-9 w-9 place-items-center border border-[var(--xp-border-strong)] text-lg transition-colors hover:border-[var(--xp-accent)] hover:text-[var(--xp-accent-bright)]"
           >
             ✕
           </button>
@@ -35,7 +35,7 @@ export default function HamburgerDrawer({ open, onClose }) {
                 <Link
                   to={`/collections/${cat.slug}`}
                   onClick={onClose}
-                  className="block border-b border-white/5 py-3 text-lg transition-colors hover:text-white/60"
+                  className="block border-b border-[var(--xp-border)] py-3 text-lg transition-colors hover:text-[var(--xp-accent-bright)]"
                 >
                   {cat.name}
                 </Link>
@@ -43,11 +43,11 @@ export default function HamburgerDrawer({ open, onClose }) {
             ))}
           </ul>
         </nav>
-        <div className="border-t border-white/10 px-5 py-5">
+        <div className="border-t border-[var(--xp-border)] px-5 py-5">
           <Link
             to="/collections"
             onClick={onClose}
-            className="block w-full border border-white py-3 text-center text-sm font-medium transition-colors hover:bg-white hover:text-black"
+            className="btn-outline block w-full py-3 text-center text-sm font-medium"
           >
             View all collections
           </Link>

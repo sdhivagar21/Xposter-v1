@@ -1,105 +1,63 @@
 # XPOSTERS — Frontend
 
-A standalone React (Vite + Tailwind) frontend for XPOSTERS, a poster
-e-commerce site. Runs entirely on local mock data — no backend required.
+React (Vite + Tailwind) frontend for XPOSTERS, a poster e-commerce site.
+Talks to the `xposters-backend` API for products, orders, and admin login —
+see that project's README for backend setup (MongoDB Atlas + Cloudinary +
+deploying to Render).
 
 ## Run it locally
 
-```bash
-npm install
-npm run dev
-```
+1. Get the backend running first (see `xposters-backend/README.md`) — by
+   default it runs on `http://localhost:4000`.
+2. Copy `.env.example` to `.env`. The default `VITE_API_BASE_URL` already
+   points at the local backend, so no changes needed for local dev.
+3. Install and run:
+   ```bash
+   npm install
+   npm run dev
+   ```
+4. Open the local URL Vite prints (usually `http://localhost:5173`).
 
-Then open the local URL Vite prints (usually `http://localhost:5173`).
+## Admin panel
 
-`npm run dev` and `npm run build` both automatically regenerate the image
-manifest first (via a `pre` script), so you never need to run it manually
-unless you're adding photos mid-session — see below.
+Visit `/admin/login` (also linked quietly at the bottom of the site footer)
+and sign in with the admin email/password you set in the backend's `.env`.
+From there:
 
-## Adding real poster photos
+- **Products** (`/admin`) — add, edit, or delete posters, upload their
+  photo (stored on Cloudinary), set price/category/description, and toggle
+  "featured" to control what shows in the homepage's scrolling wall.
+- **Orders** (`/admin/orders`) — every order placed through checkout,
+  newest first, with customer details and line items.
 
-Each category has its own folder under `public/images/`:
-
-```
-public/images/tamil-movies/
-public/images/english-movies/
-public/images/cars-bikes/
-public/images/marvel-dc/
-public/images/anime/
-public/images/cartoon/
-public/images/motivational/
-```
-
-Drop `.jpg` (or `.png`/`.webp`) files into the matching folder — **any
-filename works**, no code editing required. Each image automatically
-becomes a product: its filename (converted to Title Case) becomes the
-poster's display name, and the first image in a category becomes that
-category's "featured" pick for the homepage wall. So `u1.jpg` shows up as
-"U1", `better-call-saul.jpg` as "Better Call Saul", and so on.
-
-A category with real photos in it stops showing the placeholder demo
-posters entirely and only shows your real ones; a category still empty
-keeps showing its placeholders so the site never looks bare.
-
-After adding or renaming photos, run:
-
-```bash
-npm run manifest
-```
-
-then restart `npm run dev` (or refresh if you're mid-session — JSON
-imports need a restart to pick up). `npm run build` regenerates it
-automatically too.
-
-### Renaming a batch of photos at once
-
-If your photos come out of your phone/WhatsApp with names like
-`WhatsApp Image 2026-09-07 at 7.32.47.jpg`, use the included PowerShell
-helper instead of renaming by hand. From inside one category's folder:
-
-```powershell
-cd "C:\path\to\xposters\public\images\tamil-movies"
-powershell -ExecutionPolicy Bypass -File ..\..\..\scripts\rename-posters.ps1
-```
-
-It opens each photo in your default viewer, asks what to call it, and
-renames the file to a clean, web-safe version of that name
-(`U1` → `u1.jpg`). Skip a file by pressing Enter with no name. Run it
-again per category folder. Nothing else needs to change afterward — just
-`npm run manifest` and restart `npm run dev`.
+There's no local-file or filename-based product system anymore — every
+poster's name, price, and photo are set directly through this panel and
+stored in the database.
 
 ## Data & persistence
 
-- **Products**: for categories with real photos, products are generated
-  automatically from `src/data/imageManifest.json` (see "Adding real
-  poster photos" above). Categories with no photos yet fall back to the
-  curated demo entries in `src/data/mockProducts.js`. Swap this whole
-  layer for real API calls later — `src/api/client.js` already has an
-  axios instance pointed at `VITE_API_BASE_URL` (see `.env`) ready to
-  wire up.
-- **Cart** and **wishlist** persist in the browser's `localStorage`, so they
-  survive refreshes but are per-browser, not synced anywhere.
-- **Reviews** submitted via the "leave a review" form on a product page are
-  also saved to `localStorage`; auto-generated products start with no seed
-  reviews, so the first one is whoever leaves it.
+- **Products, reviews, and orders** live in the backend's MongoDB database
+  — see `src/api/products.js`, `src/api/orders.js`, and `src/api/admin.js`
+  for the API calls.
+- **Cart** and **wishlist** still persist in the browser's `localStorage`
+  — private to each visitor's device, not stored on the backend.
+- **Admin login token** is stored in `localStorage` too, checked against
+  the backend on each admin page load.
 
 ## Checkout
 
 `/checkout` collects name, email, phone, and address (validated), shows an
-order summary, and on "Place order":
+order summary, and on "Place order" saves a real order to the database via
+`POST /api/orders` and redirects to `/order-success` with the generated
+order ID. No real payment is processed yet — the exact spot in
+`src/pages/Checkout.jsx` where a real payment gateway call (Razorpay,
+Stripe, etc.) would go is marked with a comment.
 
-- logs the full order object to the browser console
-- generates a mock order ID
-- clears the cart and navigates to `/order-success`
+## Deploying
 
-No real payment is processed. The exact spot in `src/pages/Checkout.jsx`
-where a real payment gateway call (Razorpay, Stripe, etc.) would go is
-marked with a comment.
-
-## Admin-style "featured" flag
-
-The homepage's auto-scrolling poster wall pulls from each category's
-featured pick. For auto-generated products, that's simply the first image
-in the category's folder; for the curated demo data it's the products with
-`featured: true` in `src/data/mockProducts.js`. Either way it simulates
-what an admin would later toggle from a dashboard.
+Deploy this to Vercel (or Netlify) as usual — framework preset Vite, build
+command `npm run build`, output directory `dist`. Set `VITE_API_BASE_URL`
+in the deploy platform's environment variables to your deployed backend's
+URL (e.g. `https://xposters-backend.onrender.com/api`), and set the
+backend's `CLIENT_URL` env var to match this frontend's deployed URL so
+CORS allows it.
