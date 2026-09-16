@@ -6,6 +6,7 @@ export const CATEGORIES = [
   { slug: "anime", name: "Anime" },
   { slug: "cartoon", name: "Cartoon" },
   { slug: "motivational", name: "Motivational" },
+  { slug: "split-posters", name: "Split Posters" },
 ];
 
 export function getCategoryName(slug) {
