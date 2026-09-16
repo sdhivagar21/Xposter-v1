@@ -1,6 +1,9 @@
-import apiClient from "./client.js";
+function generateOrderId() {
+  return `XP-${Date.now().toString(36).toUpperCase()}`;
+}
 
 export async function placeOrder({ customer, items, subtotal }) {
-  const { data } = await apiClient.post("/orders", { customer, items, subtotal });
-  return data; // { orderId, ... }
+  const orderId = generateOrderId();
+  console.log("XPOSTERS mock order placed:", { orderId, customer, items, subtotal, placedAt: new Date().toISOString() });
+  return { orderId };
 }

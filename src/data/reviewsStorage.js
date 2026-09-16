@@ -1,7 +1,3 @@
-// User-submitted reviews aren't backed by a real database yet, so new
-// reviews are appended to localStorage, keyed by product id, and merged
-// with the product's seed mock reviews for display.
-
 const STORAGE_KEY = "xposters_reviews";
 
 function loadAll() {
@@ -18,7 +14,7 @@ export function getStoredReviews(productId) {
   return all[productId] || [];
 }
 
-export function addReview(productId, review) {
+export function addStoredReview(productId, review) {
   const all = loadAll();
   const existing = all[productId] || [];
   const newReview = { id: `local-${Date.now()}`, ...review };
