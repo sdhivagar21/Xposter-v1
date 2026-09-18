@@ -1,33 +1,36 @@
-import * as localCatalog from "../data/localCatalog.js";
+import apiClient from "./client.js";
 
 export async function fetchProducts({ category, sort, q } = {}) {
-  if (q) return localCatalog.searchProducts(q);
-  if (category) return localCatalog.getProductsByCategory(category, sort);
-  return localCatalog.getAllProducts();
+  const params = {};
+  if (category) params.category = category;
+  if (sort) params.sort = sort;
+  if (q) params.q = q;
+  const { data } = await apiClient.get("/products", { params });
+  return data;
 }
 
 export async function fetchFeaturedProducts() {
-  return localCatalog.getFeaturedProducts();
+  const { data } = await apiClient.get("/products/featured");
+  return data;
 }
 
 export async function fetchProduct(id) {
-  const product = localCatalog.getProductById(id);
-  if (!product) throw new Error("Product not found");
-  return product;
+  const { data } = await apiClient.get(`/products/${id}`);
+  return data;
 }
 
 export async function fetchRelatedProducts(id, limit = 6) {
-  const product = localCatalog.getProductById(id);
-  if (!product) return [];
-  return localCatalog.getRelatedProducts(product, limit);
+  const { data } = await apiClient.get(`/products/${id}/related`, { params: { limit } });
+  return data;
 }
 
 export async function submitReview(id, { name, rating, comment }) {
-  const updated = localCatalog.addReview(id, { name, rating: Number(rating), comment });
-  if (!updated) throw new Error("Product not found");
-  return updated;
+  const { data } = await apiClient.post(`/products/${id}/reviews`, { name, rating, comment });
+  return data;
 }
 
 export function averageRating(product) {
-  return localCatalog.averageRating(product);
+  if (!product?.reviews || product.reviews.length === 0) return 0;
+  const sum = product.reviews.reduce((acc, r) => acc + r.rating, 0);
+  return sum / product.reviews.length;
 }
