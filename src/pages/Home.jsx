@@ -1,13 +1,13 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { CATEGORIES } from "../data/categories.js";
-import { fetchProducts, fetchFeaturedProducts } from "../api/products.js";
+import { fetchHomeSections, fetchFeaturedProducts } from "../api/products.js";
 import PosterWallRow from "../components/PosterWallRow.jsx";
 import CategoryChip from "../components/CategoryChip.jsx";
 import ProductCard from "../components/ProductCard.jsx";
 
 export default function Home() {
-  const [products, setProducts] = useState([]);
+  const [sections, setSections] = useState({});
   const [rows, setRows] = useState({ rowA: [], rowB: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -16,17 +16,19 @@ export default function Home() {
     let cancelled = false;
     setLoading(true);
 
-    Promise.all([fetchProducts(), fetchFeaturedProducts()])
-      .then(([allProducts, featured]) => {
+    // Only pulls up to 10 newest posters per category (server-side) plus the
+    // featured set for the wall - not the entire catalog.
+    Promise.all([fetchHomeSections(10), fetchFeaturedProducts()])
+      .then(([sectionsData, featured]) => {
         if (cancelled) return;
-        setProducts(allProducts);
+        setSections(sectionsData);
         // Shuffled between two marquee rows scrolling in opposite directions.
         const shuffled = [...featured].sort(() => Math.random() - 0.5);
         const mid = Math.ceil(shuffled.length / 2);
         setRows({ rowA: shuffled.slice(0, mid), rowB: shuffled.slice(mid) });
       })
       .catch(() => {
-        if (!cancelled) setError("Couldn't load the catalog right now — try refreshing.");
+        if (!cancelled) setError("Couldn't load the catalog right now - try refreshing.");
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -39,7 +41,7 @@ export default function Home() {
 
   const categoriesWithProducts = CATEGORIES.map((cat) => ({
     ...cat,
-    products: products.filter((p) => p.category === cat.slug),
+    products: sections[cat.slug] || [],
   })).filter((cat) => cat.products.length > 0);
 
   return (
@@ -58,7 +60,7 @@ export default function Home() {
             className="animate-hero-rise mx-auto mt-5 max-w-md text-balance text-white/60"
             style={{ animationDelay: "0.15s" }}
           >
-            Big, bold prints for people who like their walls loud. Movies, machines, heroes and mantras — framed for people with taste.
+            Big, bold prints for people who like their walls loud. Movies, machines, heroes and mantras - framed for people with taste.
           </p>
           <div className="animate-hero-rise mt-8" style={{ animationDelay: "0.3s" }}>
             <Link
@@ -94,7 +96,7 @@ export default function Home() {
 
       {/* Collection sections */}
       <section className="mx-auto max-w-6xl space-y-14 px-5 pb-20">
-        {loading && <p className="text-sm text-white/40">Loading posters…</p>}
+        {loading && <p className="text-sm text-white/40">Loading posters...</p>}
         {!loading &&
           categoriesWithProducts.map((cat) => (
             <div key={cat.slug}>

@@ -1,16 +1,32 @@
 import apiClient from "./client.js";
 
-export async function fetchProducts({ category, sort, q } = {}) {
+// Returns { products, total, page, pageSize, totalPages }
+export async function fetchProducts({ category, sort, q, page, limit } = {}) {
   const params = {};
   if (category) params.category = category;
   if (sort) params.sort = sort;
   if (q) params.q = q;
+  if (page) params.page = page;
+  if (limit) params.limit = limit;
   const { data } = await apiClient.get("/products", { params });
   return data;
 }
 
 export async function fetchFeaturedProducts() {
   const { data } = await apiClient.get("/products/featured");
+  return data;
+}
+
+// Returns { [categorySlug]: [product, ...] } - up to `limit` newest per
+// category, for the homepage collection rows.
+export async function fetchHomeSections(limit = 10) {
+  const { data } = await apiClient.get("/products/sections", { params: { limit } });
+  return data;
+}
+
+// Returns { [categorySlug]: { count, cover } } for the /collections tiles.
+export async function fetchCollectionsSummary() {
+  const { data } = await apiClient.get("/products/collections-summary");
   return data;
 }
 

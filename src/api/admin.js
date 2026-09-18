@@ -29,8 +29,14 @@ export async function fetchAdminMe() {
   return data;
 }
 
-export async function fetchAdminProducts() {
-  const { data } = await apiClient.get("/admin/products", { headers: authHeaders() });
+// Returns { products, total, page, pageSize, totalPages }
+export async function fetchAdminProducts({ category, q, page, limit } = {}) {
+  const params = {};
+  if (category) params.category = category;
+  if (q) params.q = q;
+  if (page) params.page = page;
+  if (limit) params.limit = limit;
+  const { data } = await apiClient.get("/admin/products", { headers: authHeaders(), params });
   return data;
 }
 
