@@ -94,7 +94,7 @@ export default function ProductDetail() {
     <div className="mx-auto max-w-6xl px-5 py-12">
       <div className="grid gap-10 md:grid-cols-2">
         <div className="md:sticky md:top-24 md:self-start">
-          <PosterImage src={product.image} alt={product.name} aspect="aspect-[3/4]" />
+          <PosterImage src={product.image} alt={product.name} aspect="aspect-[3/4]" width={800} />
         </div>
 
         <div>

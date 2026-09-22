@@ -3,6 +3,7 @@ import AdminLayout from "../../components/admin/AdminLayout.jsx";
 import ProductFormModal from "../../components/admin/ProductFormModal.jsx";
 import { fetchAdminProducts, deleteAdminProduct } from "../../api/admin.js";
 import { CATEGORIES, getCategoryName } from "../../data/categories.js";
+import { optimizedImage } from "../../utils/cloudinaryUrl.js";
 
 const PAGE_SIZE = 50;
 
@@ -162,7 +163,7 @@ export default function AdminDashboard() {
               {products.map((p) => (
                 <tr key={p.id} className="border-b border-[var(--xp-border)]">
                   <td className="py-3 pr-4">
-                    <img src={p.image} alt={p.name} className="h-14 w-11 object-cover" />
+                    <img src={optimizedImage(p.image, 100)} alt={p.name} className="h-14 w-11 object-cover" />
                   </td>
                   <td className="py-3 pr-4">{p.name}</td>
                   <td className="py-3 pr-4 text-white/60">{getCategoryName(p.category)}</td>

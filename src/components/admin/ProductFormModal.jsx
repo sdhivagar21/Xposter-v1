@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { CATEGORIES } from "../../data/categories.js";
 import { createAdminProduct, updateAdminProduct } from "../../api/admin.js";
+import { optimizedImage } from "../../utils/cloudinaryUrl.js";
 
 export default function ProductFormModal({ product, onClose, onSaved }) {
   const isEdit = Boolean(product);
@@ -130,7 +131,7 @@ export default function ProductFormModal({ product, onClose, onSaved }) {
               className="w-full text-xs text-white/60 file:mr-3 file:border file:border-[var(--xp-border-strong)] file:bg-transparent file:px-3 file:py-1.5 file:text-xs file:text-[var(--xp-white)]"
             />
             {preview && (
-              <img src={preview} alt="Preview" className="mt-3 h-32 w-24 border border-[var(--xp-border)] object-cover" />
+              <img src={optimizedImage(preview, 200)} alt="Preview" className="mt-3 h-32 w-24 border border-[var(--xp-border)] object-cover" />
             )}
           </div>
 

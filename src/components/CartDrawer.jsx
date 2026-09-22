@@ -52,6 +52,7 @@ export default function CartDrawer() {
                     alt={item.name}
                     aspect="aspect-[2/3]"
                     className="w-16"
+                    width={150}
                   />
                   <div className="flex flex-1 flex-col justify-between">
                     <div>
