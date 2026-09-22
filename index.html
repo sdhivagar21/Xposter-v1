@@ -6,6 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="XPOSTERS — bold, black-and-white movie, anime, car and motivational posters." />
     <title>XPOSTERS — Posters that make a statement</title>
+    <!-- Loaded as <link> tags (not a CSS @import) so the browser can start
+         fetching fonts immediately, in parallel with everything else,
+         instead of waiting for the main stylesheet to load and parse first
+         before it even discovers the font request. preconnect warms up the
+         connection to both Google Fonts hosts ahead of time. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap"
+    />
   </head>
   <body>
     <div id="root"></div>
