@@ -25,8 +25,8 @@ export default function Header() {
               <span className="h-px w-5 bg-[var(--xp-white)]" />
               <span className="h-px w-5 bg-[var(--xp-white)]" />
             </button>
-            <Link to="/" className="font-display text-2xl tracking-wide">
-              XPOSTERS
+            <Link to="/" aria-label="XPOSTERS" className="flex items-center">
+              <img src="/logo-mark.png" alt="XPOSTERS" className="h-7 w-auto sm:h-8" />
             </Link>
           </div>
 

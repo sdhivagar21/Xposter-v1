@@ -145,7 +145,8 @@ select:focus-visible {
   .animate-glow-pulse,
   .animate-marquee-left,
   .animate-marquee-right,
-  .animate-logo-pulse {
+  .animate-logo-pulse,
+  .poster-frame.is-loading {
     animation: none !important;
   }
 }
@@ -175,10 +176,31 @@ select:focus-visible {
 
 .poster-frame img {
   display: block;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.poster-frame img.loaded {
+  opacity: 1;
 }
 
 .poster-frame img.broken {
   opacity: 0;
+}
+
+/* Soft pulsing placeholder while a poster image is still downloading */
+@keyframes poster-shimmer {
+  0%,
+  100% {
+    background-color: var(--xp-bg-elevated);
+  }
+  50% {
+    background-color: var(--xp-border);
+  }
+}
+
+.poster-frame.is-loading {
+  animation: poster-shimmer 1.6s ease-in-out infinite;
 }
 
 .poster-fallback {
