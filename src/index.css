@@ -145,8 +145,7 @@ select:focus-visible {
   .animate-glow-pulse,
   .animate-marquee-left,
   .animate-marquee-right,
-  .animate-logo-pulse,
-  .poster-frame.is-loading {
+  .animate-logo-pulse {
     animation: none !important;
   }
 }
@@ -188,19 +187,14 @@ select:focus-visible {
   opacity: 0;
 }
 
-/* Soft pulsing placeholder while a poster image is still downloading */
-@keyframes poster-shimmer {
-  0%,
-  100% {
-    background-color: var(--xp-bg-elevated);
-  }
-  50% {
-    background-color: var(--xp-border);
-  }
-}
-
-.poster-frame.is-loading {
-  animation: poster-shimmer 1.6s ease-in-out infinite;
+/* Same branded loading mark as the full-page LoadingScreen, centered
+   inside the frame while this individual poster image downloads. */
+.poster-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .poster-fallback {
