@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { getCategoryName } from "../data/categories.js";
 import { fetchProducts } from "../api/products.js";
 import ProductCard from "../components/ProductCard.jsx";
+import { sortTamilMovies } from "../utils/tamilMoviesOrder.js";
 
 const SORT_OPTIONS = [
   { id: "newest", label: "Newest" },
@@ -31,7 +32,8 @@ export default function CategoryPage() {
     fetchProducts({ category: slug, sort, page: 1, limit: PAGE_SIZE })
       .then((data) => {
         if (cancelled) return;
-        setProducts(data.products);
+        const list = slug === "tamil-movies" ? sortTamilMovies(data.products) : data.products;
+        setProducts(list);
         setTotal(data.total);
         setTotalPages(data.totalPages);
         setPage(1);
@@ -52,7 +54,10 @@ export default function CategoryPage() {
     setLoadingMore(true);
     fetchProducts({ category: slug, sort, page: nextPage, limit: PAGE_SIZE })
       .then((data) => {
-        setProducts((prev) => [...prev, ...data.products]);
+        setProducts((prev) => {
+          const combined = [...prev, ...data.products];
+          return slug === "tamil-movies" ? sortTamilMovies(combined) : combined;
+        });
         setPage(nextPage);
         setTotalPages(data.totalPages);
       })

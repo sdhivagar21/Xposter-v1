@@ -6,6 +6,7 @@ import PosterWallRow from "../components/PosterWallRow.jsx";
 import CategoryChip from "../components/CategoryChip.jsx";
 import ProductCard from "../components/ProductCard.jsx";
 import LoadingScreen from "../components/LoadingScreen.jsx";
+import { sortTamilMovies } from "../utils/tamilMoviesOrder.js";
 
 export default function Home() {
   const [sections, setSections] = useState({});
@@ -40,10 +41,13 @@ export default function Home() {
     };
   }, []);
 
-  const categoriesWithProducts = CATEGORIES.map((cat) => ({
-    ...cat,
-    products: sections[cat.slug] || [],
-  })).filter((cat) => cat.products.length > 0);
+  const categoriesWithProducts = CATEGORIES.map((cat) => {
+    const products = sections[cat.slug] || [];
+    return {
+      ...cat,
+      products: cat.slug === "tamil-movies" ? sortTamilMovies(products) : products,
+    };
+  }).filter((cat) => cat.products.length > 0);
 
   return (
     <div>
