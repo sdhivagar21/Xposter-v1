@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import AdminLayout from "../../components/admin/AdminLayout.jsx";
 import { fetchAdminOrders } from "../../api/admin.js";
+import LoadingScreen from "../../components/LoadingScreen.jsx";
 
 export default function AdminOrders() {
   const [orders, setOrders] = useState([]);
@@ -19,7 +20,7 @@ export default function AdminOrders() {
       <h1 className="font-display text-3xl">Orders</h1>
 
       {error && <p className="mt-6 text-sm text-white/50">{error}</p>}
-      {loading && <p className="mt-6 text-sm text-white/40">Loading…</p>}
+      {loading && <LoadingScreen />}
 
       {!loading && orders.length === 0 && (
         <p className="mt-10 text-sm text-white/40">No orders placed yet.</p>

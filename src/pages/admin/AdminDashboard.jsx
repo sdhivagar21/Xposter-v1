@@ -4,6 +4,7 @@ import ProductFormModal from "../../components/admin/ProductFormModal.jsx";
 import { fetchAdminProducts, deleteAdminProduct } from "../../api/admin.js";
 import { CATEGORIES, getCategoryName } from "../../data/categories.js";
 import { optimizedImage } from "../../utils/cloudinaryUrl.js";
+import LoadingScreen from "../../components/LoadingScreen.jsx";
 
 const PAGE_SIZE = 50;
 
@@ -137,7 +138,7 @@ export default function AdminDashboard() {
       </div>
 
       {error && <p className="mt-6 text-sm text-white/50">{error}</p>}
-      {loading && <p className="mt-6 text-sm text-white/40">Loading...</p>}
+      {loading && <LoadingScreen />}
 
       {!loading && products.length === 0 && (
         <p className="mt-10 text-sm text-white/40">

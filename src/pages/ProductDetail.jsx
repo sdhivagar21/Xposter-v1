@@ -6,6 +6,7 @@ import { useWishlist } from "../context/WishlistContext.jsx";
 import PosterImage from "../components/PosterImage.jsx";
 import ProductCard from "../components/ProductCard.jsx";
 import StarRating from "../components/StarRating.jsx";
+import LoadingScreen from "../components/LoadingScreen.jsx";
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -54,9 +55,7 @@ export default function ProductDetail() {
   }
 
   if (loading || !product) {
-    return (
-      <div className="mx-auto max-w-6xl px-5 py-20 text-center text-sm text-white/40">Loading poster…</div>
-    );
+    return <LoadingScreen />;
   }
 
   const avgRating = averageRating(product);

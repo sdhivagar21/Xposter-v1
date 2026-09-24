@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useWishlist } from "../context/WishlistContext.jsx";
 import { fetchProduct } from "../api/products.js";
 import ProductCard from "../components/ProductCard.jsx";
+import LoadingScreen from "../components/LoadingScreen.jsx";
 
 export default function Wishlist() {
   const { ids, removeFromWishlist } = useWishlist();
@@ -47,7 +48,9 @@ export default function Wishlist() {
         {loading ? "Loading…" : `${products.length} ${products.length === 1 ? "poster" : "posters"} saved`}
       </p>
 
-      {!loading && products.length === 0 ? (
+      {loading ? (
+        <LoadingScreen />
+      ) : products.length === 0 ? (
         <div className="mt-16 text-center">
           <p className="text-white/50">Nothing saved yet. Tap the heart on any poster to keep it here.</p>
           <Link to="/collections" className="btn-outline mt-4 inline-block px-5 py-2.5 text-sm">

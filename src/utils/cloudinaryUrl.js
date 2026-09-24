@@ -5,8 +5,10 @@
 // where the browser supports it) instead of the full original upload.
 //
 // f_auto - best format for the visitor's browser
-// q_auto - automatic quality/compression (usually a big size cut with no
-//          visible difference)
+// q_auto:low - automatic quality/compression, pushed as far toward "smallest
+//          file" as Cloudinary's auto-quality goes. Visibly softer than
+//          q_auto:eco on a full-screen zoom, but the biggest file-size win -
+//          the right trade for a catalog of thumbnail/card-sized posters.
 // w_<width> - resize to the width actually needed on screen
 //
 // Safe no-op for anything that isn't a Cloudinary "/upload/" URL - a local
@@ -18,6 +20,6 @@ export function optimizedImage(url, width) {
   if (index === -1) return url;
 
   const insertAt = index + marker.length;
-  const transform = `f_auto,q_auto,w_${width}/`;
+  const transform = `f_auto,q_auto:low,w_${width}/`;
   return url.slice(0, insertAt) + transform + url.slice(insertAt);
 }

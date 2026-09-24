@@ -123,11 +123,97 @@ select:focus-visible {
   animation-play-state: paused;
 }
 
+/* Hero floating poster cards (kinetic homepage layout) */
+@keyframes float-card {
+  0%,
+  100% {
+    transform: translateY(0) rotate(var(--r, 0deg));
+  }
+  50% {
+    transform: translateY(-14px) rotate(var(--r, 0deg));
+  }
+}
+
+.animate-float-card {
+  animation: float-card 5s ease-in-out infinite;
+}
+
+/* Branded loading screen - the logo mark breathes gently while waiting */
+@keyframes logo-pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(0.96);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-logo-pulse {
+  animation: logo-pulse 1.6s ease-in-out infinite;
+}
+
+/* Kinetic hero headline - each line slides and brightens on hover */
+.kinetic-line {
+  display: inline-block;
+  width: fit-content;
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), color 0.3s ease;
+}
+
+.kinetic-line:hover {
+  transform: translateX(18px);
+  color: var(--xp-accent-bright);
+}
+
+/* Numbered "shop by category" index rows */
+.index-row {
+  position: relative;
+  overflow: hidden;
+}
+
+.index-row::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  height: 1px;
+  width: 0;
+  background: var(--xp-accent);
+  transition: width 0.5s ease;
+}
+
+.index-row:hover::after {
+  width: 100%;
+}
+
+.index-row-num,
+.index-row-name,
+.index-row-arrow {
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), color 0.3s ease;
+}
+
+.index-row:hover .index-row-num {
+  color: var(--xp-accent);
+}
+
+.index-row:hover .index-row-name {
+  transform: translateX(14px);
+  color: var(--xp-accent-bright);
+}
+
+.index-row:hover .index-row-arrow {
+  transform: translateX(8px);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-hero-rise,
   .animate-glow-pulse,
   .animate-marquee-left,
-  .animate-marquee-right {
+  .animate-marquee-right,
+  .animate-float-card,
+  .animate-logo-pulse {
     animation: none !important;
   }
 }
