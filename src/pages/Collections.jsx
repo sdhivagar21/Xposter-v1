@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { CATEGORIES } from "../data/categories.js";
 import { fetchCollectionsSummary } from "../api/products.js";
 import PosterImage from "../components/PosterImage.jsx";
+import LoadingScreen from "../components/LoadingScreen.jsx";
 
 export default function Collections() {
   const [summary, setSummary] = useState({});
@@ -18,7 +19,7 @@ export default function Collections() {
         if (!cancelled) setSummary(data);
       })
       .catch(() => {
-        if (!cancelled) setError("Couldn't load collections right now.");
+        if (!cancelled) setError("Couldn''t load collections right now.");
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -33,7 +34,7 @@ export default function Collections() {
       <h1 className="font-display text-4xl sm:text-5xl">Collections</h1>
       <p className="mt-3 max-w-md text-white/50">Seven worlds. Pick one and start filling your walls.</p>
 
-      {loading && <p className="mt-10 text-sm text-white/40">Loading collections...</p>}
+      {loading && <LoadingScreen />}
       {error && <p className="mt-10 text-sm text-white/40">{error}</p>}
 
       {!loading && !error && (

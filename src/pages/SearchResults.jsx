@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { fetchProducts } from "../api/products.js";
 import ProductCard from "../components/ProductCard.jsx";
+import LoadingScreen from "../components/LoadingScreen.jsx";
 
 const PAGE_SIZE = 24;
 
@@ -33,7 +34,7 @@ export default function SearchResults() {
         setPage(1);
       })
       .catch(() => {
-        if (!cancelled) setError("Search isn't working right now - try again in a moment.");
+        if (!cancelled) setError("Search isn''t working right now - try again in a moment.");
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -52,7 +53,7 @@ export default function SearchResults() {
         setPage(nextPage);
         setTotalPages(data.totalPages);
       })
-      .catch(() => setError("Couldn't load more results right now."))
+      .catch(() => setError("Couldn''t load more results right now."))
       .finally(() => setLoadingMore(false));
   }
 
@@ -66,6 +67,8 @@ export default function SearchResults() {
       </p>
 
       {error && <p className="mt-10 text-sm text-white/40">{error}</p>}
+
+      {!error && loading && <LoadingScreen />}
 
       {!error && !loading && results.length === 0 && (
         <div className="mt-16 text-center">

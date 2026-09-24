@@ -1,15 +1,16 @@
-import { Suspense, lazy } from "react";
+﻿import { Suspense, lazy } from "react";
 import { Routes, Route } from "react-router-dom";
 import Header from "./components/Header.jsx";
 import Footer from "./components/Footer.jsx";
 import CartDrawer from "./components/CartDrawer.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
+import LoadingScreen from "./components/LoadingScreen.jsx";
 import Home from "./pages/Home.jsx";
 import ProtectedAdminRoute from "./components/admin/ProtectedAdminRoute.jsx";
 
 // Everything except the homepage loads on demand instead of shipping in the
 // first script the browser downloads. Most visits land on "/" and never
-// touch checkout, wishlist, or (almost never) the admin pages - there's no
+// touch checkout, wishlist, or (almost never) the admin pages - there''s no
 // reason to make every visitor download and parse that code up front. Vite
 // splits each of these into its own small chunk, fetched only when the
 // matching route is actually visited.
@@ -41,9 +42,9 @@ export default function App() {
   return (
     <>
       <ScrollToTop />
-      <Suspense fallback={null}>
+      <Suspense fallback={<LoadingScreen fullScreen />}>
         <Routes>
-          {/* Admin section has its own layout — no customer header/footer/cart */}
+          {/* Admin section has its own layout â€” no customer header/footer/cart */}
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route
             path="/admin"

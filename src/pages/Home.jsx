@@ -5,13 +5,22 @@ import { fetchHomeSections, fetchFeaturedProducts } from "../api/products.js";
 import PosterWallRow from "../components/PosterWallRow.jsx";
 import PosterImage from "../components/PosterImage.jsx";
 import ProductCard from "../components/ProductCard.jsx";
+import LoadingScreen from "../components/LoadingScreen.jsx";
 
 // Hero floating-card layout: left/top offsets, rotation and animation delay
-// for each of the (up to) 3 real posters shown stacked beside the headline.
-const HERO_CARD_LAYOUT = [
-  { left: 0, top: 24, rotate: "-6deg", delay: "0s" },
-  { left: 110, top: 76, rotate: "3deg", delay: "0.6s" },
-  { left: 222, top: 8, rotate: "-3deg", delay: "1.2s" },
+// for each of the (up to) 3 real posters shown beside the headline. Mobile
+// gets its own compact 2-card layout (sized to fit a phone width) instead of
+// just hiding the visual - phones are the primary target here, not desktop
+// shrunk down.
+const HERO_CARD_LAYOUT_DESKTOP = [
+  { left: 0, top: 24, width: 230, rotate: "-6deg", delay: "0s" },
+  { left: 110, top: 76, width: 230, rotate: "3deg", delay: "0.6s" },
+  { left: 222, top: 8, width: 230, rotate: "-3deg", delay: "1.2s" },
+];
+
+const HERO_CARD_LAYOUT_MOBILE = [
+  { left: 0, top: 8, width: 150, rotate: "-5deg", delay: "0s" },
+  { left: 92, top: 58, width: 150, rotate: "4deg", delay: "0.6s" },
 ];
 
 const TICKER_ITEMS = [...CATEGORIES, ...CATEGORIES];
@@ -91,26 +100,53 @@ export default function Home() {
         </div>
 
         {heroCards.length > 0 && (
-          <div className="relative hidden h-[420px] sm:block" aria-hidden="true">
-            {heroCards.map((product, i) => {
-              const layout = HERO_CARD_LAYOUT[i];
-              return (
-                <div
-                  key={product.id}
-                  className="animate-float-card absolute w-[230px] shadow-2xl shadow-black/50"
-                  style={{
-                    left: layout.left,
-                    top: layout.top,
-                    "--r": layout.rotate,
-                    animationDelay: layout.delay,
-                    zIndex: i + 1,
-                  }}
-                >
-                  <PosterImage src={product.image} alt={product.name} width={460} />
-                </div>
-              );
-            })}
-          </div>
+          <>
+            {/* Mobile: compact 2-card stack, shown below the headline */}
+            <div className="relative mx-auto h-[300px] w-[240px] sm:hidden" aria-hidden="true">
+              {heroCards.slice(0, 2).map((product, i) => {
+                const layout = HERO_CARD_LAYOUT_MOBILE[i];
+                return (
+                  <div
+                    key={product.id}
+                    className="animate-float-card absolute shadow-2xl shadow-black/50"
+                    style={{
+                      left: layout.left,
+                      top: layout.top,
+                      width: layout.width,
+                      "--r": layout.rotate,
+                      animationDelay: layout.delay,
+                      zIndex: i + 1,
+                    }}
+                  >
+                    <PosterImage src={product.image} alt={product.name} width={300} />
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Desktop: full 3-card spread beside the headline */}
+            <div className="relative hidden h-[420px] sm:block" aria-hidden="true">
+              {heroCards.map((product, i) => {
+                const layout = HERO_CARD_LAYOUT_DESKTOP[i];
+                return (
+                  <div
+                    key={product.id}
+                    className="animate-float-card absolute shadow-2xl shadow-black/50"
+                    style={{
+                      left: layout.left,
+                      top: layout.top,
+                      width: layout.width,
+                      "--r": layout.rotate,
+                      animationDelay: layout.delay,
+                      zIndex: i + 1,
+                    }}
+                  >
+                    <PosterImage src={product.image} alt={product.name} width={460} />
+                  </div>
+                );
+              })}
+            </div>
+          </>
         )}
       </section>
 
@@ -180,7 +216,7 @@ export default function Home() {
 
       {/* Collection sections */}
       <section className="mx-auto max-w-6xl space-y-14 px-5 pb-20 sm:px-8">
-        {loading && <p className="text-sm text-white/40">Loading posters...</p>}
+        {loading && <LoadingScreen />}
         {!loading &&
           categoriesWithProducts.map((cat) => (
             <div key={cat.slug}>

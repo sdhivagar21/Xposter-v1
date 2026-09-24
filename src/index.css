@@ -138,6 +138,23 @@ select:focus-visible {
   animation: float-card 5s ease-in-out infinite;
 }
 
+/* Branded loading screen - the logo mark breathes gently while waiting */
+@keyframes logo-pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(0.96);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-logo-pulse {
+  animation: logo-pulse 1.6s ease-in-out infinite;
+}
+
 /* Kinetic hero headline - each line slides and brightens on hover */
 .kinetic-line {
   display: inline-block;
@@ -195,7 +212,8 @@ select:focus-visible {
   .animate-glow-pulse,
   .animate-marquee-left,
   .animate-marquee-right,
-  .animate-float-card {
+  .animate-float-card,
+  .animate-logo-pulse {
     animation: none !important;
   }
 }

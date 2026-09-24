@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { useParams, Link, Navigate } from "react-router-dom";
 import { fetchProduct, fetchRelatedProducts, submitReview, averageRating } from "../api/products.js";
 import { useCart } from "../context/CartContext.jsx";
@@ -6,6 +6,7 @@ import { useWishlist } from "../context/WishlistContext.jsx";
 import PosterImage from "../components/PosterImage.jsx";
 import ProductCard from "../components/ProductCard.jsx";
 import StarRating from "../components/StarRating.jsx";
+import LoadingScreen from "../components/LoadingScreen.jsx";
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -54,9 +55,7 @@ export default function ProductDetail() {
   }
 
   if (loading || !product) {
-    return (
-      <div className="mx-auto max-w-6xl px-5 py-20 text-center text-sm text-white/40">Loading poster…</div>
-    );
+    return <LoadingScreen />;
   }
 
   const avgRating = averageRating(product);
@@ -84,7 +83,7 @@ export default function ProductDetail() {
       setReviewSubmitted(true);
       setTimeout(() => setReviewSubmitted(false), 2500);
     } catch {
-      setReviewError("Couldn't post that review — try again in a moment.");
+      setReviewError("Couldn''t post that review â€” try again in a moment.");
     } finally {
       setSubmitting(false);
     }
@@ -99,7 +98,7 @@ export default function ProductDetail() {
 
         <div>
           <Link to={`/collections/${product.category}`} className="text-xs text-white/40 transition-colors hover:text-white">
-            ← Back to category
+            â† Back to category
           </Link>
           <h1 className="mt-3 font-display text-4xl leading-tight sm:text-5xl">{product.name}</h1>
 
@@ -110,7 +109,7 @@ export default function ProductDetail() {
             </span>
           </div>
 
-          <p className="mt-5 text-2xl">₹{product.price}</p>
+          <p className="mt-5 text-2xl">â‚¹{product.price}</p>
           {product.description && (
             <p className="mt-4 max-w-md text-sm leading-relaxed text-white/60">{product.description}</p>
           )}
@@ -120,7 +119,7 @@ export default function ProductDetail() {
               onClick={handleAddToCart}
               className="btn-primary flex-1 py-3.5 text-sm font-medium"
             >
-              {added ? "Added ✓" : "Add to Cart"}
+              {added ? "Added âœ“" : "Add to Cart"}
             </button>
             <button
               onClick={() => toggleWishlist(product.id)}
@@ -153,7 +152,7 @@ export default function ProductDetail() {
 
         <div className="mt-8 grid gap-10 md:grid-cols-2">
           <ul className="space-y-6">
-            {product.reviews.length === 0 && <p className="text-sm text-white/40">No reviews yet — be the first.</p>}
+            {product.reviews.length === 0 && <p className="text-sm text-white/40">No reviews yet â€” be the first.</p>}
             {product.reviews.map((r) => (
               <li key={r.id} className="border-b border-[var(--xp-border)] pb-5">
                 <div className="flex items-center justify-between">
@@ -216,7 +215,7 @@ export default function ProductDetail() {
               disabled={submitting}
               className="btn-primary w-full py-2.5 text-sm font-medium"
             >
-              {submitting ? "Posting…" : reviewSubmitted ? "Thanks — review posted ✓" : "Submit review"}
+              {submitting ? "Postingâ€¦" : reviewSubmitted ? "Thanks â€” review posted âœ“" : "Submit review"}
             </button>
           </form>
         </div>

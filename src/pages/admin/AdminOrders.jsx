@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import AdminLayout from "../../components/admin/AdminLayout.jsx";
 import { fetchAdminOrders } from "../../api/admin.js";
+import LoadingScreen from "../../components/LoadingScreen.jsx";
 
 export default function AdminOrders() {
   const [orders, setOrders] = useState([]);
@@ -10,7 +11,7 @@ export default function AdminOrders() {
   useEffect(() => {
     fetchAdminOrders()
       .then(setOrders)
-      .catch(() => setError("Couldn't load orders."))
+      .catch(() => setError("Couldn''t load orders."))
       .finally(() => setLoading(false));
   }, []);
 
@@ -19,7 +20,7 @@ export default function AdminOrders() {
       <h1 className="font-display text-3xl">Orders</h1>
 
       {error && <p className="mt-6 text-sm text-white/50">{error}</p>}
-      {loading && <p className="mt-6 text-sm text-white/40">Loading…</p>}
+      {loading && <LoadingScreen />}
 
       {!loading && orders.length === 0 && (
         <p className="mt-10 text-sm text-white/40">No orders placed yet.</p>
@@ -45,15 +46,15 @@ export default function AdminOrders() {
                     {order.items.map((item, i) => (
                       <li key={i} className="flex justify-between text-white/70">
                         <span>
-                          {item.name} × {item.qty}
+                          {item.name} Ã— {item.qty}
                         </span>
-                        <span>₹{item.qty * item.price}</span>
+                        <span>â‚¹{item.qty * item.price}</span>
                       </li>
                     ))}
                   </ul>
                   <div className="mt-2 flex justify-between border-t border-[var(--xp-border)] pt-2 text-sm font-medium">
                     <span>Subtotal</span>
-                    <span>₹{order.subtotal}</span>
+                    <span>â‚¹{order.subtotal}</span>
                   </div>
                 </div>
               </div>
