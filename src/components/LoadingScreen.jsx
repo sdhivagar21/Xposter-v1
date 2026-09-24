@@ -1,8 +1,16 @@
+<<<<<<< HEAD
 // Branded loading state - shown instead of blank space or plain text
 // wherever the site is waiting on something: a lazy-loaded route, a page's
 // first data fetch, etc. `fullScreen` covers the whole viewport (used for
 // the route-level Suspense fallback, where nothing else has rendered yet);
 // without it, it just centers in the space it's given.
+=======
+﻿// Branded loading state - shown instead of blank space or plain text
+// wherever the site is waiting on something: a lazy-loaded route, a page''s
+// first data fetch, etc. `fullScreen` covers the whole viewport (used for
+// the route-level Suspense fallback, where nothing else has rendered yet);
+// without it, it just centers in the space it''s given.
+>>>>>>> 3a83a726504563791aef8a7eeff248305648179f
 export default function LoadingScreen({ fullScreen = false, className = "" }) {
   return (
     <div

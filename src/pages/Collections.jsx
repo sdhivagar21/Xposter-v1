@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { CATEGORIES } from "../data/categories.js";
 import { fetchCollectionsSummary } from "../api/products.js";
@@ -19,7 +19,7 @@ export default function Collections() {
         if (!cancelled) setSummary(data);
       })
       .catch(() => {
-        if (!cancelled) setError("Couldn't load collections right now.");
+        if (!cancelled) setError("Couldn''t load collections right now.");
       })
       .finally(() => {
         if (!cancelled) setLoading(false);

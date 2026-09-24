@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+﻿import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { CATEGORIES } from "../data/categories.js";
 import { fetchHomeSections, fetchFeaturedProducts } from "../api/products.js";
@@ -47,7 +47,7 @@ export default function Home() {
         setRows({ rowA: shuffled.slice(0, mid), rowB: shuffled.slice(mid) });
       })
       .catch(() => {
-        if (!cancelled) setError("Couldn't load the catalog right now - try refreshing.");
+        if (!cancelled) setError("Couldn''t load the catalog right now - try refreshing.");
       })
       .finally(() => {
         if (!cancelled) setLoading(false);

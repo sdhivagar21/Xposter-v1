@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useWishlist } from "../context/WishlistContext.jsx";
 import { fetchProduct } from "../api/products.js";
@@ -26,7 +26,7 @@ export default function Wishlist() {
         if (result.status === "fulfilled") {
           found.push(result.value);
         } else {
-          // Product no longer exists (e.g. removed by an admin) — drop the
+          // Product no longer exists (e.g. removed by an admin) â€” drop the
           // stale id from the saved wishlist instead of showing a gap.
           removeFromWishlist(ids[i]);
         }
@@ -45,7 +45,7 @@ export default function Wishlist() {
     <div className="mx-auto max-w-6xl px-5 py-14">
       <h1 className="font-display text-4xl sm:text-5xl">Wishlist</h1>
       <p className="mt-2 text-sm text-white/40">
-        {loading ? "Loading…" : `${products.length} ${products.length === 1 ? "poster" : "posters"} saved`}
+        {loading ? "Loadingâ€¦" : `${products.length} ${products.length === 1 ? "poster" : "posters"} saved`}
       </p>
 
       {loading ? (

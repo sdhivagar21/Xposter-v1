@@ -1,9 +1,9 @@
-/* Font <link> tags now live in index.html so the browser can fetch them in
+﻿/* Font <link> tags now live in index.html so the browser can fetch them in
    parallel with the page instead of waiting on this stylesheet first. */
 @import "tailwindcss";
 
 :root {
-  /* Warm charcoal + brass — a boutique print-gallery palette instead of
+  /* Warm charcoal + brass â€” a boutique print-gallery palette instead of
      flat black/white. Neutrals carry the design; the accent is used
      sparingly, on ratings, prices-on-hover, and primary actions only. */
   --xp-bg: #0c0b09;
@@ -47,7 +47,7 @@ select:focus-visible {
   outline-offset: 2px;
 }
 
-/* Film grain overlay — a fixed, fully-decorative noise layer for premium texture */
+/* Film grain overlay â€” a fixed, fully-decorative noise layer for premium texture */
 .film-grain {
   pointer-events: none;
   position: fixed;
@@ -55,7 +55,7 @@ select:focus-visible {
   z-index: 60;
   opacity: 0.05;
   mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns=''http://www.w3.org/2000/svg'' width=''120'' height=''120''%3E%3Cfilter id=''n''%3E%3CfeTurbulence type=''fractalNoise'' baseFrequency=''0.9'' numOctaves=''2'' stitchTiles=''stitch''/%3E%3C/filter%3E%3Crect width=''100%25'' height=''100%25'' filter=''url(%23n)''/%3E%3C/svg%3E");
 }
 
 /* Hero entrance */
@@ -228,8 +228,8 @@ select:focus-visible {
   border-radius: 999px;
 }
 
-/* Broken image fallback styling — a graceful placeholder instead of a
-   browser broken-image icon when a product's photo fails to load. */
+/* Broken image fallback styling â€” a graceful placeholder instead of a
+   browser broken-image icon when a product''s photo fails to load. */
 .poster-frame {
   position: relative;
   background: var(--xp-bg-elevated);
@@ -262,7 +262,7 @@ select:focus-visible {
   line-height: 1.4;
 }
 
-/* Reusable button styles — gold-filled primary actions, ivory-outlined
+/* Reusable button styles â€” gold-filled primary actions, ivory-outlined
    secondary ones with a subtle accent hover instead of a full invert. */
 .btn-primary {
   background: var(--xp-accent);

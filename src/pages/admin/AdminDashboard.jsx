@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import AdminLayout from "../../components/admin/AdminLayout.jsx";
 import ProductFormModal from "../../components/admin/ProductFormModal.jsx";
 import { fetchAdminProducts, deleteAdminProduct } from "../../api/admin.js";
@@ -31,7 +31,7 @@ export default function AdminDashboard() {
         setTotalPages(data.totalPages);
         setPage(1);
       })
-      .catch(() => setError("Couldn't load products."))
+      .catch(() => setError("Couldn''t load products."))
       .finally(() => setLoading(false));
   }
 
@@ -47,7 +47,7 @@ export default function AdminDashboard() {
         setPage(nextPage);
         setTotalPages(data.totalPages);
       })
-      .catch(() => setError("Couldn't load more products."))
+      .catch(() => setError("Couldn''t load more products."))
       .finally(() => setLoadingMore(false));
   }
 
@@ -64,14 +64,14 @@ export default function AdminDashboard() {
   }
 
   async function handleDelete(id) {
-    if (!window.confirm("Delete this poster? This can't be undone.")) return;
+    if (!window.confirm("Delete this poster? This can''t be undone.")) return;
     setDeletingId(id);
     try {
       await deleteAdminProduct(id);
       setProducts((prev) => prev.filter((p) => p.id !== id));
       setTotal((prev) => Math.max(0, prev - 1));
     } catch {
-      setError("Couldn't delete that product - try again.");
+      setError("Couldn''t delete that product - try again.");
     } finally {
       setDeletingId(null);
     }
@@ -168,7 +168,7 @@ export default function AdminDashboard() {
                   </td>
                   <td className="py-3 pr-4">{p.name}</td>
                   <td className="py-3 pr-4 text-white/60">{getCategoryName(p.category)}</td>
-                  <td className="py-3 pr-4">₹{p.price}</td>
+                  <td className="py-3 pr-4">â‚¹{p.price}</td>
                   <td className="py-3 pr-4">{p.featured ? "Yes" : "-"}</td>
                   <td className="py-3 pr-4 text-white/60">{p.reviews.length}</td>
                   <td className="py-3 pr-4">
