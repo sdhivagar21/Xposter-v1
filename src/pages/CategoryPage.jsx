@@ -151,6 +151,13 @@ function CustomPosterForm() {
   const [mode, setMode] = useState("upload"); // "upload" | "link"
   const [file, setFile] = useState(null);
   const [filePreview, setFilePreview] = useState(null);
+  // Tracks whether the current preview <img> has actually finished loading,
+  // so it can pick up the .loaded class the shared .poster-frame CSS relies
+  // on (that CSS starts every image at opacity: 0 and only reveals it once
+  // .loaded is added - PosterImage.jsx does the same thing for product
+  // photos). Reset to false whenever the preview source changes, so a new
+  // pick/link doesn't render with the previous image's visibility.
+  const [previewLoaded, setPreviewLoaded] = useState(false);
   const [imageLink, setImageLink] = useState("");
   const [selectedSize, setSelectedSize] = useState(SIZES[0]);
   const [form, setForm] = useState({ name: "", email: "", phone: "", address: "", notes: "" });
@@ -165,12 +172,14 @@ function CustomPosterForm() {
     if (!picked) return;
     setFile(picked);
     setImageLink("");
+    setPreviewLoaded(false);
     setFilePreview(URL.createObjectURL(picked));
   }
 
   function handleModeChange(next) {
     setMode(next);
     setServerError(null);
+    setPreviewLoaded(false);
     if (next === "upload") {
       setImageLink("");
     } else {
@@ -262,12 +271,18 @@ function CustomPosterForm() {
         <div>
           <div className="poster-frame flex aspect-[3/4] items-center justify-center overflow-hidden">
             {mode === "upload" && filePreview ? (
-              <img src={filePreview} alt="Your poster preview" className="h-full w-full object-contain" />
+              <img
+                src={filePreview}
+                alt="Your poster preview"
+                className={`h-full w-full object-contain ${previewLoaded ? "loaded" : ""}`}
+                onLoad={() => setPreviewLoaded(true)}
+              />
             ) : mode === "link" && imageLink.trim() ? (
               <img
                 src={imageLink.trim()}
                 alt="Your poster preview"
-                className="h-full w-full object-contain"
+                className={`h-full w-full object-contain ${previewLoaded ? "loaded" : ""}`}
+                onLoad={() => setPreviewLoaded(true)}
                 onError={(e) => {
                   e.currentTarget.style.display = "none";
                 }}
@@ -318,7 +333,10 @@ function CustomPosterForm() {
                 type="url"
                 placeholder="https://example.com/your-image.jpg"
                 value={imageLink}
-                onChange={(e) => setImageLink(e.target.value)}
+                onChange={(e) => {
+                  setPreviewLoaded(false);
+                  setImageLink(e.target.value);
+                }}
                 className="mt-3 w-full border border-[var(--xp-border-strong)] bg-transparent px-3 py-2.5 text-sm outline-none focus:border-[var(--xp-accent)]"
               />
             )}
