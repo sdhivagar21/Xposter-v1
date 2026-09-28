@@ -74,8 +74,24 @@ export default function AdminOrders() {
                       </li>
                     ))}
                   </ul>
-                  <div className="mt-2 flex justify-between border-t border-[var(--xp-border)] pt-2 text-sm font-medium">
-                    <span>Subtotal</span>
+                  {order.discountAmount > 0 && (
+                    <>
+                      <div className="mt-2 flex justify-between border-t border-[var(--xp-border)] pt-2 text-sm text-white/60">
+                        <span>Items total</span>
+                        <span>₹{order.items.reduce((sum, item) => sum + item.qty * item.price, 0)}</span>
+                      </div>
+                      <div className="mt-1 flex justify-between text-sm text-[var(--xp-accent-bright)]">
+                        <span>Bundle discount ({order.discountPercent}%)</span>
+                        <span>-₹{order.discountAmount}</span>
+                      </div>
+                    </>
+                  )}
+                  <div
+                    className={`flex justify-between text-sm font-medium ${
+                      order.discountAmount > 0 ? "mt-1" : "mt-2 border-t border-[var(--xp-border)] pt-2"
+                    }`}
+                  >
+                    <span>Total</span>
                     <span>₹{order.subtotal}</span>
                   </div>
                 </div>

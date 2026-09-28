@@ -1,8 +1,12 @@
 import axios from "axios";
 import apiClient from "./client.js";
 
-export async function placeOrder({ customer, items, subtotal }) {
-  const { data } = await apiClient.post("/orders", { customer, items, subtotal });
+// The backend computes the subtotal (and any bulk-poster discount) itself
+// from `items` rather than trusting a number from here - see
+// orderController.js's createOrder - so there's nothing to send but the
+// order's own contents.
+export async function placeOrder({ customer, items }) {
+  const { data } = await apiClient.post("/orders", { customer, items });
   return data;
 }
 

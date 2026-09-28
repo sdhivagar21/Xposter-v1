@@ -3,7 +3,20 @@ import { useCart } from "../context/CartContext.jsx";
 import PosterImage from "./PosterImage.jsx";
 
 export default function CartDrawer() {
-  const { items, updateQty, removeFromCart, subtotal, isDrawerOpen, setDrawerOpen } = useCart();
+  const {
+    items,
+    updateQty,
+    removeFromCart,
+    itemCount,
+    subtotal,
+    discountEligible,
+    discountPercent,
+    discountAmount,
+    total,
+    itemsToNextDiscount,
+    isDrawerOpen,
+    setDrawerOpen,
+  } = useCart();
 
   return (
     <>
@@ -44,6 +57,31 @@ export default function CartDrawer() {
           </div>
         ) : (
           <>
+            {/* Bundle-discount nudge - the whole point of showing this here
+                (rather than only at checkout) is to catch shoppers while
+                they can still act on it: add one more poster, right now,
+                and save 23%. */}
+            <div className="mx-5 mt-4 border border-[var(--xp-accent-dim)] bg-[var(--xp-accent)]/10 px-4 py-3">
+              {discountEligible ? (
+                <p className="text-xs font-medium text-[var(--xp-accent-bright)]">
+                  🎉 Bundle discount applied — {discountPercent}% off for buying 3+ posters!
+                </p>
+              ) : (
+                <>
+                  <p className="text-xs text-white/70">
+                    Add {itemsToNextDiscount} more poster{itemsToNextDiscount === 1 ? "" : "s"} to save 23% on this
+                    order.
+                  </p>
+                  <div className="mt-2 h-1 w-full overflow-hidden bg-[var(--xp-border-strong)]">
+                    <div
+                      className="h-full bg-[var(--xp-accent)] transition-all duration-300"
+                      style={{ width: `${Math.min(100, (itemCount / 3) * 100)}%` }}
+                    />
+                  </div>
+                </>
+              )}
+            </div>
+
             <ul className="flex-1 space-y-5 overflow-y-auto px-5 py-5">
               {items.map((item) => (
                 <li key={item.key} className="flex gap-4">
@@ -91,9 +129,19 @@ export default function CartDrawer() {
               ))}
             </ul>
             <div className="border-t border-[var(--xp-border)] px-5 py-5">
-              <div className="mb-4 flex items-center justify-between text-sm">
+              <div className="flex items-center justify-between text-sm">
                 <span className="text-white/60">Subtotal</span>
-                <span className="text-lg font-medium">₹{subtotal}</span>
+                <span>₹{subtotal}</span>
+              </div>
+              {discountEligible && (
+                <div className="mt-1.5 flex items-center justify-between text-sm text-[var(--xp-accent-bright)]">
+                  <span>Bundle discount ({discountPercent}%)</span>
+                  <span>-₹{discountAmount}</span>
+                </div>
+              )}
+              <div className="mb-4 mt-1.5 flex items-center justify-between">
+                <span className="text-sm text-white/60">Total</span>
+                <span className="text-lg font-medium">₹{total}</span>
               </div>
               <Link
                 to="/checkout"

@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, useMemo } from "react";
-import { SIZES } from "../data/categories.js";
+import { SIZES, computeCartTotals } from "../data/categories.js";
 
 const CartContext = createContext(null);
 const STORAGE_KEY = "xposters_cart";
@@ -21,7 +21,7 @@ export function CartProvider({ children }) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
   }, [items]);
 
-  // `size` is one of the entries from src/data/categories.js ({slug, label, price}).
+  // `size` is one of the entries from src/data/sizes.js ({slug, label, price}).
   // Falls back to the smallest size if none is given, so any call site that
   // doesn't pass one explicitly still works.
   function addToCart(product, qty = 1, size) {
@@ -66,8 +66,12 @@ export function CartProvider({ children }) {
     setItems([]);
   }
 
-  const itemCount = useMemo(() => items.reduce((sum, i) => sum + i.qty, 0), [items]);
-  const subtotal = useMemo(() => items.reduce((sum, i) => sum + i.qty * i.price, 0), [items]);
+  // Also carries the bulk-poster discount (buy 3+, save 23%) - see
+  // computeCartTotals in data/categories.js. The backend recomputes this
+  // itself when the order is actually placed (never trusts these numbers
+  // from the frontend), so this is purely a live preview for the cart and
+  // checkout UI.
+  const totals = useMemo(() => computeCartTotals(items), [items]);
 
   const value = {
     items,
@@ -75,8 +79,13 @@ export function CartProvider({ children }) {
     updateQty,
     removeFromCart,
     clearCart,
-    itemCount,
-    subtotal,
+    itemCount: totals.totalQty,
+    subtotal: totals.subtotal,
+    discountEligible: totals.discountEligible,
+    discountPercent: totals.discountPercent,
+    discountAmount: totals.discountAmount,
+    total: totals.total,
+    itemsToNextDiscount: totals.itemsToNextDiscount,
     isDrawerOpen,
     setDrawerOpen,
   };

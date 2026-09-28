@@ -7,7 +7,8 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_RE = /^\d{10}$/;
 
 export default function Checkout() {
-  const { items, subtotal } = useCart();
+  const { items, subtotal, discountEligible, discountPercent, discountAmount, total, itemsToNextDiscount } =
+    useCart();
   const navigate = useNavigate();
 
   const [form, setForm] = useState({ name: "", email: "", phone: "", address: "" });
@@ -54,7 +55,7 @@ export default function Checkout() {
     // before the order is confirmed. For now this just saves the order to
     // the database as "placed" with no payment actually processed.
     try {
-      const { orderId } = await placeOrder({ customer: form, items: orderItems, subtotal });
+      const { orderId } = await placeOrder({ customer: form, items: orderItems });
       // The cart is cleared by OrderSuccess itself once it has mounted on
       // the new route — not here. Clearing it in the same tick as
       // navigate() caused CartDrawer (mounted globally on every page) to
@@ -153,10 +154,25 @@ export default function Checkout() {
               </li>
             ))}
           </ul>
-          <div className="mt-5 flex justify-between border-t border-[var(--xp-border)] pt-4 text-base">
+          <div className="mt-5 flex justify-between border-t border-[var(--xp-border)] pt-4 text-sm text-white/60">
             <span>Subtotal</span>
             <span>₹{subtotal}</span>
           </div>
+          {discountEligible && (
+            <div className="mt-2 flex justify-between text-sm text-[var(--xp-accent-bright)]">
+              <span>Bundle discount ({discountPercent}% off, 3+ posters)</span>
+              <span>-₹{discountAmount}</span>
+            </div>
+          )}
+          <div className="mt-2 flex justify-between text-base font-medium">
+            <span>Total</span>
+            <span>₹{total}</span>
+          </div>
+          {!discountEligible && (
+            <p className="mt-3 text-xs text-white/40">
+              Add {itemsToNextDiscount} more poster{itemsToNextDiscount === 1 ? "" : "s"} to this order to save 23%.
+            </p>
+          )}
           <Link to="/" className="mt-4 block text-center text-xs text-white/40 underline-offset-2 hover:text-white hover:underline">
             ← Continue shopping
           </Link>

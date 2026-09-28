@@ -13,6 +13,17 @@ export default function Header() {
 
   return (
     <>
+      {/* Sitewide bundle-discount ad - the main "come buy more posters" nudge,
+          seen on every page before anyone's even opened the cart. Scrolls
+          away with the page rather than staying sticky, so it doesn't eat
+          into the header's own sticky space. */}
+      <Link
+        to="/collections"
+        className="block bg-[var(--xp-accent)] px-4 py-2 text-center text-xs font-medium text-[#0c0b09] transition-colors hover:bg-[var(--xp-accent-bright)] sm:text-sm"
+      >
+        Buy 3 posters, save 23% — discount applied automatically at checkout
+      </Link>
+
       <header className="sticky top-0 z-30 border-b border-[var(--xp-border)] bg-[var(--xp-bg)]/90 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
           <div className="flex items-center gap-3">
