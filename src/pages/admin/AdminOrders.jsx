@@ -1,7 +1,8 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import AdminLayout from "../../components/admin/AdminLayout.jsx";
 import { fetchAdminOrders } from "../../api/admin.js";
 import LoadingScreen from "../../components/LoadingScreen.jsx";
+import PosterImage from "../../components/PosterImage.jsx";
 
 export default function AdminOrders() {
   const [orders, setOrders] = useState([]);
@@ -11,7 +12,7 @@ export default function AdminOrders() {
   useEffect(() => {
     fetchAdminOrders()
       .then(setOrders)
-      .catch(() => setError("Couldn''t load orders."))
+      .catch(() => setError("Couldn't load orders."))
       .finally(() => setLoading(false));
   }, []);
 
@@ -42,19 +43,40 @@ export default function AdminOrders() {
                   <p className="text-white/40">{order.customer.address}</p>
                 </div>
                 <div>
-                  <ul className="space-y-1 text-sm">
+                  <ul className="space-y-3 text-sm">
                     {order.items.map((item, i) => (
-                      <li key={i} className="flex justify-between text-white/70">
-                        <span>
-                          {item.name} Ã— {item.qty}
-                        </span>
-                        <span>â‚¹{item.qty * item.price}</span>
+                      <li key={i} className="flex items-start gap-3">
+                        {/* Clicking the thumbnail opens the full-resolution
+                            image in a new tab - important for customizable
+                            posters, where you actually need to look closely
+                            before printing. */}
+                        <a
+                          href={item.image}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="shrink-0"
+                          aria-label={`Open full-size image for ${item.name}`}
+                        >
+                          <PosterImage src={item.image} alt={item.name} aspect="aspect-[3/4]" className="w-12" width={100} />
+                        </a>
+                        <div className="flex-1">
+                          <div className="flex justify-between text-white/70">
+                            <span>
+                              {item.name} × {item.qty}
+                            </span>
+                            <span>₹{item.qty * item.price}</span>
+                          </div>
+                          {item.width && item.height && (
+                            <p className="text-xs text-white/40">{item.width} × {item.height}px</p>
+                          )}
+                          {item.notes && <p className="text-xs text-white/40">Notes: {item.notes}</p>}
+                        </div>
                       </li>
                     ))}
                   </ul>
                   <div className="mt-2 flex justify-between border-t border-[var(--xp-border)] pt-2 text-sm font-medium">
                     <span>Subtotal</span>
-                    <span>â‚¹{order.subtotal}</span>
+                    <span>₹{order.subtotal}</span>
                   </div>
                 </div>
               </div>
