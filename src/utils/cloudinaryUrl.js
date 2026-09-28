@@ -5,7 +5,7 @@
 // where the browser supports it) instead of the full original upload.
 //
 // f_auto - best format for the visitor's browser
-// q_40 - a fixed, aggressive compression level. Cloudinary's automatic
+// q_28 - a fixed, aggressive compression level. Cloudinary's automatic
 //        presets stop at "q_auto:low"; this goes past that on purpose,
 //        prioritizing load speed over pixel-perfect sharpness - fine for
 //        thumbnail/card-sized posters, softer on a full-screen zoom.
@@ -20,6 +20,6 @@ export function optimizedImage(url, width) {
   if (index === -1) return url;
 
   const insertAt = index + marker.length;
-  const transform = `f_auto,q_40,w_${width}/`;
+  const transform = `f_auto,q_28,w_${width}/`;
   return url.slice(0, insertAt) + transform + url.slice(insertAt);
 }

@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import PosterImage from "./PosterImage.jsx";
+import { SIZES } from "../data/categories.js";
 
 export default function ProductCard({ product, className = "" }) {
   return (
@@ -10,7 +11,7 @@ export default function ProductCard({ product, className = "" }) {
       <PosterImage src={product.image} alt={product.name} width={380} />
       <div className="mt-3 space-y-0.5">
         <p className="truncate text-sm font-medium text-[var(--xp-white)]">{product.name}</p>
-        <p className="text-sm text-[var(--xp-accent)]/80">₹{product.price}</p>
+        <p className="text-sm text-[var(--xp-accent)]/80">From ₹{SIZES[0].price}</p>
       </div>
     </Link>
   );

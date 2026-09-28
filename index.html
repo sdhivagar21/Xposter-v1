@@ -15,6 +15,12 @@
          connection to both Google Fonts hosts ahead of time. -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Every poster image comes from Cloudinary and every API call goes to
+         the Render backend - warming up both connections up front means the
+         browser isn't paying DNS+TLS+TCP handshake cost on the very first
+         image/data request once the page's JS has loaded. -->
+    <link rel="preconnect" href="https://res.cloudinary.com" />
+    <link rel="preconnect" href="https://xposters-backend.onrender.com" />
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap"

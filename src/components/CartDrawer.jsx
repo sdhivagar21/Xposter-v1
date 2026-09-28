@@ -57,6 +57,7 @@ export default function CartDrawer() {
                   <div className="flex flex-1 flex-col justify-between">
                     <div>
                       <p className="text-sm font-medium">{item.name}</p>
+                      {item.sizeLabel && <p className="text-xs text-white/40">{item.sizeLabel}</p>}
                     </div>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center border border-[var(--xp-border-strong)]">

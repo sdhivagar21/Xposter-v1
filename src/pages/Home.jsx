@@ -58,9 +58,14 @@ export default function Home() {
           aria-hidden="true"
         />
         <div className="relative mx-auto max-w-3xl text-center">
-          <h1 className="animate-hero-rise font-display text-6xl leading-none sm:text-8xl">
-            XPOSTERS
-          </h1>
+          <img
+            src="/logo-mark.png"
+            alt="XPOSTERS"
+            className="animate-hero-rise mx-auto h-16 w-auto sm:h-24"
+            fetchpriority="high"
+            width="1184"
+            height="423"
+          />
           <p
             className="animate-hero-rise mx-auto mt-5 max-w-md text-balance text-white/60"
             style={{ animationDelay: "0.15s" }}

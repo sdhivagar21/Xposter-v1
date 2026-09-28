@@ -45,6 +45,7 @@ export default function Checkout() {
       name: item.name,
       price: item.price,
       image: item.image,
+      size: item.size,
       qty: item.qty,
     }));
 
@@ -146,7 +147,7 @@ export default function Checkout() {
             {items.map((item) => (
               <li key={item.key} className="flex justify-between text-sm">
                 <span className="text-white/70">
-                  {item.name} × {item.qty}
+                  {item.name} {item.sizeLabel ? `(${item.sizeLabel}) ` : ""}× {item.qty}
                 </span>
                 <span>₹{item.qty * item.price}</span>
               </li>

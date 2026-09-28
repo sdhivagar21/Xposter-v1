@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { CATEGORIES } from "../data/categories.js";
 import { fetchCollectionsSummary } from "../api/products.js";
@@ -19,7 +19,7 @@ export default function Collections() {
         if (!cancelled) setSummary(data);
       })
       .catch(() => {
-        if (!cancelled) setError("Couldn''t load collections right now.");
+        if (!cancelled) setError("Couldn't load collections right now.");
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -32,7 +32,7 @@ export default function Collections() {
   return (
     <div className="mx-auto max-w-6xl px-5 py-14">
       <h1 className="font-display text-4xl sm:text-5xl">Collections</h1>
-      <p className="mt-3 max-w-md text-white/50">Seven worlds. Pick one and start filling your walls.</p>
+      <p className="mt-3 max-w-md text-white/50">Pick a world and start filling your walls — or upload your own.</p>
 
       {loading && <LoadingScreen />}
       {error && <p className="mt-10 text-sm text-white/40">{error}</p>}
@@ -40,6 +40,7 @@ export default function Collections() {
       {!loading && !error && (
         <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
           {CATEGORIES.map((cat) => {
+            const isCustom = cat.slug === "customizable-posters";
             const info = summary[cat.slug];
             const count = info?.count || 0;
             return (
@@ -48,12 +49,12 @@ export default function Collections() {
                   <PosterImage src={info.cover} alt={cat.name} aspect="aspect-[3/4]" />
                 ) : (
                   <div className="poster-frame flex aspect-[3/4] items-center justify-center">
-                    <span className="poster-fallback">{cat.name}</span>
+                    <span className="poster-fallback">{isCustom ? "+ Upload" : cat.name}</span>
                   </div>
                 )}
                 <p className="mt-3 font-display text-lg tracking-wide">{cat.name}</p>
                 <p className="text-xs text-white/40">
-                  {count} {count === 1 ? "poster" : "posters"}
+                  {isCustom ? "Upload your own design" : `${count} ${count === 1 ? "poster" : "posters"}`}
                 </p>
               </Link>
             );

@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState, useMemo } from "react";
+import { SIZES } from "../data/categories.js";
 
 const CartContext = createContext(null);
 const STORAGE_KEY = "xposters_cart";
@@ -20,9 +21,13 @@ export function CartProvider({ children }) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
   }, [items]);
 
-  function addToCart(product, qty = 1) {
+  // `size` is one of the entries from src/data/categories.js ({slug, label, price}).
+  // Falls back to the smallest size if none is given, so any call site that
+  // doesn't pass one explicitly still works.
+  function addToCart(product, qty = 1, size) {
+    const chosenSize = size || SIZES[0];
     setItems((prev) => {
-      const key = product.id;
+      const key = `${product.id}-${chosenSize.slug}`;
       const existing = prev.find((i) => i.key === key);
       if (existing) {
         return prev.map((i) => (i.key === key ? { ...i, qty: i.qty + qty } : i));
@@ -33,9 +38,11 @@ export function CartProvider({ children }) {
           key,
           id: product.id,
           name: product.name,
-          price: product.price,
           image: product.image,
           category: product.category,
+          size: chosenSize.slug,
+          sizeLabel: chosenSize.label,
+          price: chosenSize.price,
           qty,
         },
       ];
