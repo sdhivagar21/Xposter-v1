@@ -140,12 +140,29 @@ select:focus-visible {
   animation: logo-pulse 1.6s ease-in-out infinite;
 }
 
+/* Promo popup entrance - a punchier scale+fade for modals than the hero's rise */
+@keyframes modal-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-modal-pop {
+  animation: modal-pop 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-hero-rise,
   .animate-glow-pulse,
   .animate-marquee-left,
   .animate-marquee-right,
-  .animate-logo-pulse {
+  .animate-logo-pulse,
+  .animate-modal-pop {
     animation: none !important;
   }
 }
