@@ -74,7 +74,7 @@ export default function AdminOrders() {
                       </li>
                     ))}
                   </ul>
-                  {(order.discountAmount > 0 || order.a4DealAmount > 0) && (
+                  {(order.discountAmount > 0 || order.packDealAmount > 0) && (
                     <>
                       <div className="mt-2 flex justify-between border-t border-[var(--xp-border)] pt-2 text-sm text-white/60">
                         <span>Items total</span>
@@ -86,17 +86,17 @@ export default function AdminOrders() {
                           <span>-₹{order.discountAmount}</span>
                         </div>
                       )}
-                      {order.a4DealAmount > 0 && (
+                      {order.packDealAmount > 0 && (
                         <div className="mt-1 flex justify-between text-sm text-[var(--xp-accent-bright)]">
-                          <span>A4 deal (5 for ₹375)</span>
-                          <span>-₹{order.a4DealAmount}</span>
+                          <span>Pack deal (A4 / A5)</span>
+                          <span>-₹{order.packDealAmount}</span>
                         </div>
                       )}
                     </>
                   )}
                   <div
                     className={`flex justify-between text-sm font-medium ${
-                      order.discountAmount > 0 || order.a4DealAmount > 0 ? "mt-1" : "mt-2 border-t border-[var(--xp-border)] pt-2"
+                      order.discountAmount > 0 || order.packDealAmount > 0 ? "mt-1" : "mt-2 border-t border-[var(--xp-border)] pt-2"
                     }`}
                   >
                     <span>Total</span>

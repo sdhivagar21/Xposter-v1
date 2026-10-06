@@ -12,10 +12,8 @@ export default function CartDrawer() {
     discountEligible,
     discountPercent,
     discountAmount,
-    a4Qty,
-    a4Packs,
-    a4DealAmount,
-    a4ToNextDeal,
+    packDeals,
+    packDealAmount,
     otherQty,
     total,
     itemsToNextDiscount,
@@ -74,7 +72,7 @@ export default function CartDrawer() {
               ) : (
                 <>
                   <p className="text-xs text-white/70">
-                    Add {itemsToNextDiscount} more A5/A3 poster{itemsToNextDiscount === 1 ? "" : "s"} to save 23% on this
+                    Add {itemsToNextDiscount} more A3 poster{itemsToNextDiscount === 1 ? "" : "s"} to save 23% on this
                     order.
                   </p>
                   <div className="mt-2 h-1 w-full overflow-hidden bg-[var(--xp-border-strong)]">
@@ -86,18 +84,24 @@ export default function CartDrawer() {
                 </>
               )}
             </div>
-            {a4Qty > 0 && (
-              <div className="mx-5 mt-3 border border-[var(--xp-accent-dim)] bg-[var(--xp-accent)]/10 px-4 py-3">
-                {a4Packs > 0 && (
-                  <p className="text-xs font-medium text-[var(--xp-accent-bright)]">
-                    🎉 A4 deal applied — 5 A4 posters for just ₹375{a4Packs > 1 ? ` (×${a4Packs})` : ""}!
-                  </p>
-                )}
-                {a4ToNextDeal > 0 && (
-                  <p className={`text-xs text-white/70 ${a4Packs > 0 ? "mt-1" : ""}`}>
-                    Add {a4ToNextDeal} more A4 poster{a4ToNextDeal === 1 ? "" : "s"} to get 5 A4 posters for just ₹375.
-                  </p>
-                )}
+            {packDeals.length > 0 && (
+              <div className="mx-5 mt-3 space-y-2 border border-[var(--xp-accent-dim)] bg-[var(--xp-accent)]/10 px-4 py-3">
+                {packDeals.map((deal) => (
+                  <div key={deal.size}>
+                    {deal.packs > 0 && (
+                      <p className="text-xs font-medium text-[var(--xp-accent-bright)]">
+                        🎉 {deal.label} deal applied — {deal.qty} {deal.label} posters for just ₹{deal.price}
+                        {deal.packs > 1 ? ` (×${deal.packs})` : ""}!
+                      </p>
+                    )}
+                    {deal.toNext > 0 && (
+                      <p className={`text-xs text-white/70 ${deal.packs > 0 ? "mt-1" : ""}`}>
+                        Add {deal.toNext} more {deal.label} poster{deal.toNext === 1 ? "" : "s"} to get {deal.qty}{" "}
+                        {deal.label} posters for just ₹{deal.price}.
+                      </p>
+                    )}
+                  </div>
+                ))}
               </div>
             )}
 
@@ -158,12 +162,19 @@ export default function CartDrawer() {
                   <span>-₹{discountAmount}</span>
                 </div>
               )}
-              {a4DealAmount > 0 && (
-                <div className="mt-1.5 flex items-center justify-between text-sm text-[var(--xp-accent-bright)]">
-                  <span>A4 deal (5 for ₹375)</span>
-                  <span>-₹{a4DealAmount}</span>
-                </div>
-              )}
+              {packDeals
+                .filter((deal) => deal.amount > 0)
+                .map((deal) => (
+                  <div
+                    key={deal.size}
+                    className="mt-1.5 flex items-center justify-between text-sm text-[var(--xp-accent-bright)]"
+                  >
+                    <span>
+                      {deal.label} deal ({deal.qty} for ₹{deal.price})
+                    </span>
+                    <span>-₹{deal.amount}</span>
+                  </div>
+                ))}
               <div className="mb-4 mt-1.5 flex items-center justify-between">
                 <span className="text-sm text-white/60">Total</span>
                 <span className="text-lg font-medium">₹{total}</span>
