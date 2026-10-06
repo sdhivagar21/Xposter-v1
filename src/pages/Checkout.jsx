@@ -55,13 +55,13 @@ export default function Checkout() {
     // before the order is confirmed. For now this just saves the order to
     // the database as "placed" with no payment actually processed.
     try {
-      const { orderId } = await placeOrder({ customer: form, items: orderItems });
+      const { orderId, subtotal: amountDue } = await placeOrder({ customer: form, items: orderItems });
       // The cart is cleared by OrderSuccess itself once it has mounted on
       // the new route — not here. Clearing it in the same tick as
       // navigate() caused CartDrawer (mounted globally on every page) to
       // re-render mid-transition and occasionally land back on "/" instead
       // of the order-success page.
-      navigate("/order-success", { state: { orderId } });
+      navigate("/order-success", { state: { orderId, amount: amountDue ?? total } });
     } catch {
       setServerError("Couldn't place your order right now — please try again in a moment.");
     } finally {
