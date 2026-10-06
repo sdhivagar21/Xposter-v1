@@ -21,7 +21,7 @@ export function getCategoryName(slug) {
 // src/data/categories.js.
 export const SIZES = [
   { slug: "a5", label: "A5", dimensions: '5.8" x 8.3"', price: 60 },
-  { slug: "a4", label: "A4", dimensions: '8.3" x 11.7"', price: 70 },
+  { slug: "a4", label: "A4", dimensions: '8.3" x 11.7"', price: 95 },
   { slug: "a3", label: "A3", dimensions: '11.7" x 16.5"', price: 130 },
 ];
 
