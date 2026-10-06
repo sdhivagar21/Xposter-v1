@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { getCategoryName, SIZES } from "../data/categories.js";
-import { fetchProducts } from "../api/products.js";
+import { fetchAllProducts, getCachedAll } from "../api/products.js";
 import { submitCustomPosterOrder } from "../api/orders.js";
 import ProductCard from "../components/ProductCard.jsx";
 import { sortTamilMovies } from "../utils/tamilMoviesOrder.js";
@@ -12,22 +12,19 @@ const SORT_OPTIONS = [
   { id: "price-desc", label: "Price: High to Low" },
 ];
 
-const PAGE_SIZE = 24;
-
 export default function CategoryPage() {
   const { slug } = useParams();
   const [sort, setSort] = useState("newest");
-  const [products, setProducts] = useState([]);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [total, setTotal] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [error, setError] = useState(null);
   const categoryName = getCategoryName(slug);
   const isCustomPosters = slug === "customizable-posters";
+  const cacheParams = { category: slug, sort };
+  const cached = isCustomPosters ? null : getCachedAll(cacheParams);
+  const [products, setProducts] = useState(cached ? (slug === "tamil-movies" ? sortTamilMovies(cached.products) : cached.products) : []);
+  const [total, setTotal] = useState(cached ? cached.total : 0);
+  const [loading, setLoading] = useState(!cached);
+  const [error, setError] = useState(null);
 
-  // Reset to page 1 whenever the category or sort changes. The
+  // The whole category is loaded at once (no "Load more"). The
   // customizable-posters "category" isn't backed by real Product documents
   // (see CustomPosterForm below), so there's nothing to fetch for it.
   useEffect(() => {
@@ -36,18 +33,24 @@ export default function CategoryPage() {
       return;
     }
     let cancelled = false;
-    setLoading(true);
-    fetchProducts({ category: slug, sort, page: 1, limit: PAGE_SIZE })
+    const hit = getCachedAll({ category: slug, sort });
+    const order = (list) => (slug === "tamil-movies" ? sortTamilMovies(list) : list);
+    if (hit) {
+      setProducts(order(hit.products));
+      setTotal(hit.total);
+      setLoading(false);
+    } else {
+      setLoading(true);
+    }
+    setError(null);
+    fetchAllProducts({ category: slug, sort })
       .then((data) => {
         if (cancelled) return;
-        const list = slug === "tamil-movies" ? sortTamilMovies(data.products) : data.products;
-        setProducts(list);
+        setProducts(order(data.products));
         setTotal(data.total);
-        setTotalPages(data.totalPages);
-        setPage(1);
       })
       .catch(() => {
-        if (!cancelled) setError("Couldn't load this category right now.");
+        if (!cancelled && !hit) setError("Couldn't load this category right now.");
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -56,22 +59,6 @@ export default function CategoryPage() {
       cancelled = true;
     };
   }, [slug, sort, isCustomPosters]);
-
-  function loadMore() {
-    const nextPage = page + 1;
-    setLoadingMore(true);
-    fetchProducts({ category: slug, sort, page: nextPage, limit: PAGE_SIZE })
-      .then((data) => {
-        setProducts((prev) => {
-          const combined = [...prev, ...data.products];
-          return slug === "tamil-movies" ? sortTamilMovies(combined) : combined;
-        });
-        setPage(nextPage);
-        setTotalPages(data.totalPages);
-      })
-      .catch(() => setError("Couldn't load more posters right now."))
-      .finally(() => setLoadingMore(false));
-  }
 
   if (isCustomPosters) {
     return <CustomPosterForm />;
@@ -122,18 +109,6 @@ export default function CategoryPage() {
               <ProductCard key={product.id} product={product} className="w-full" />
             ))}
           </div>
-
-          {page < totalPages && (
-            <div className="mt-10 text-center">
-              <button
-                onClick={loadMore}
-                disabled={loadingMore}
-                className="btn-outline px-6 py-2.5 text-sm disabled:opacity-50"
-              >
-                {loadingMore ? "Loading..." : "Load more"}
-              </button>
-            </div>
-          )}
         </>
       )}
     </div>

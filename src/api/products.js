@@ -50,3 +50,29 @@ export function averageRating(product) {
   const sum = product.reviews.reduce((acc, r) => acc + r.rating, 0);
   return sum / product.reviews.length;
 }
+// Backend caps a request at 60 products, so "everything" = page 1 plus the
+// remaining pages fetched in parallel. Results are cached per query so going
+// back to a listing shows it instantly (needed to restore scroll position).
+const allCache = new Map();
+const ALL_PAGE_SIZE = 60;
+
+export function getCachedAll(params) {
+  return allCache.get(JSON.stringify(params));
+}
+
+export async function fetchAllProducts(params = {}) {
+  const key = JSON.stringify(params);
+  const first = await fetchProducts({ ...params, page: 1, limit: ALL_PAGE_SIZE });
+  let products = first.products;
+  if (first.totalPages > 1) {
+    const rest = await Promise.all(
+      Array.from({ length: first.totalPages - 1 }, (_, i) =>
+        fetchProducts({ ...params, page: i + 2, limit: ALL_PAGE_SIZE })
+      )
+    );
+    products = products.concat(...rest.map((r) => r.products));
+  }
+  const result = { products, total: first.total };
+  allCache.set(key, result);
+  return result;
+}
