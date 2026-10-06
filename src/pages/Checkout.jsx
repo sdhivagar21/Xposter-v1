@@ -7,8 +7,17 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_RE = /^\d{10}$/;
 
 export default function Checkout() {
-  const { items, subtotal, discountEligible, discountPercent, discountAmount, total, itemsToNextDiscount } =
-    useCart();
+  const {
+    items,
+    subtotal,
+    discountEligible,
+    discountPercent,
+    discountAmount,
+    a4DealAmount,
+    a4ToNextDeal,
+    total,
+    itemsToNextDiscount,
+  } = useCart();
   const navigate = useNavigate();
 
   const [form, setForm] = useState({ name: "", email: "", phone: "", address: "" });
@@ -164,13 +173,24 @@ export default function Checkout() {
               <span>-₹{discountAmount}</span>
             </div>
           )}
+          {a4DealAmount > 0 && (
+            <div className="mt-2 flex justify-between text-sm text-[var(--xp-accent-bright)]">
+              <span>A4 deal (5 A4 posters for ₹375)</span>
+              <span>-₹{a4DealAmount}</span>
+            </div>
+          )}
           <div className="mt-2 flex justify-between text-base font-medium">
             <span>Total</span>
             <span>₹{total}</span>
           </div>
           {!discountEligible && (
             <p className="mt-3 text-xs text-white/40">
-              Add {itemsToNextDiscount} more poster{itemsToNextDiscount === 1 ? "" : "s"} to this order to save 23%.
+              Add {itemsToNextDiscount} more A5/A3 poster{itemsToNextDiscount === 1 ? "" : "s"} to this order to save 23%.
+            </p>
+          )}
+          {a4ToNextDeal > 0 && (
+            <p className="mt-2 text-xs text-white/40">
+              Add {a4ToNextDeal} more A4 poster{a4ToNextDeal === 1 ? "" : "s"} to get 5 A4 posters for just ₹375.
             </p>
           )}
           <Link to="/" className="mt-4 block text-center text-xs text-white/40 underline-offset-2 hover:text-white hover:underline">

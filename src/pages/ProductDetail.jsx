@@ -3,7 +3,7 @@ import { useParams, Link, Navigate } from "react-router-dom";
 import { fetchProduct, fetchRelatedProducts, submitReview, averageRating } from "../api/products.js";
 import { useCart } from "../context/CartContext.jsx";
 import { useWishlist } from "../context/WishlistContext.jsx";
-import { SIZES } from "../data/categories.js";
+import { SIZES, A4_DEAL } from "../data/categories.js";
 import PosterImage from "../components/PosterImage.jsx";
 import ProductCard from "../components/ProductCard.jsx";
 import StarRating from "../components/StarRating.jsx";
@@ -134,6 +134,9 @@ export default function ProductDetail() {
                 </button>
               ))}
             </div>
+            <p className="mt-3 text-xs text-[var(--xp-accent-bright)]">
+              A4 deal: buy 5 A4 posters for just ₹375 (save ₹{A4_DEAL.qty * (SIZES.find((s) => s.slug === A4_DEAL.size)?.price || 0) - A4_DEAL.price}).
+            </p>
           </div>
 
           <div className="mt-8 flex gap-3">

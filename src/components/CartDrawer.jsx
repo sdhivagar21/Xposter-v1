@@ -12,6 +12,11 @@ export default function CartDrawer() {
     discountEligible,
     discountPercent,
     discountAmount,
+    a4Qty,
+    a4Packs,
+    a4DealAmount,
+    a4ToNextDeal,
+    otherQty,
     total,
     itemsToNextDiscount,
     isDrawerOpen,
@@ -69,18 +74,32 @@ export default function CartDrawer() {
               ) : (
                 <>
                   <p className="text-xs text-white/70">
-                    Add {itemsToNextDiscount} more poster{itemsToNextDiscount === 1 ? "" : "s"} to save 23% on this
+                    Add {itemsToNextDiscount} more A5/A3 poster{itemsToNextDiscount === 1 ? "" : "s"} to save 23% on this
                     order.
                   </p>
                   <div className="mt-2 h-1 w-full overflow-hidden bg-[var(--xp-border-strong)]">
                     <div
                       className="h-full bg-[var(--xp-accent)] transition-all duration-300"
-                      style={{ width: `${Math.min(100, (itemCount / 3) * 100)}%` }}
+                      style={{ width: `${Math.min(100, (otherQty / 3) * 100)}%` }}
                     />
                   </div>
                 </>
               )}
             </div>
+            {a4Qty > 0 && (
+              <div className="mx-5 mt-3 border border-[var(--xp-accent-dim)] bg-[var(--xp-accent)]/10 px-4 py-3">
+                {a4Packs > 0 && (
+                  <p className="text-xs font-medium text-[var(--xp-accent-bright)]">
+                    🎉 A4 deal applied — 5 A4 posters for just ₹375{a4Packs > 1 ? ` (×${a4Packs})` : ""}!
+                  </p>
+                )}
+                {a4ToNextDeal > 0 && (
+                  <p className={`text-xs text-white/70 ${a4Packs > 0 ? "mt-1" : ""}`}>
+                    Add {a4ToNextDeal} more A4 poster{a4ToNextDeal === 1 ? "" : "s"} to get 5 A4 posters for just ₹375.
+                  </p>
+                )}
+              </div>
+            )}
 
             <ul className="flex-1 space-y-5 overflow-y-auto px-5 py-5">
               {items.map((item) => (
@@ -137,6 +156,12 @@ export default function CartDrawer() {
                 <div className="mt-1.5 flex items-center justify-between text-sm text-[var(--xp-accent-bright)]">
                   <span>Bundle discount ({discountPercent}%)</span>
                   <span>-₹{discountAmount}</span>
+                </div>
+              )}
+              {a4DealAmount > 0 && (
+                <div className="mt-1.5 flex items-center justify-between text-sm text-[var(--xp-accent-bright)]">
+                  <span>A4 deal (5 for ₹375)</span>
+                  <span>-₹{a4DealAmount}</span>
                 </div>
               )}
               <div className="mb-4 mt-1.5 flex items-center justify-between">
