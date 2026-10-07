@@ -21,7 +21,7 @@ export default function Header() {
         to="/collections"
         className="block bg-[var(--xp-accent)] px-4 py-2 text-center text-xs font-medium text-[#0c0b09] transition-colors hover:bg-[var(--xp-accent-bright)] sm:text-sm"
       >
-        Buy 3 posters, save 23% — discount applied automatically at checkout
+        Buy 3 A3 posters, save 23% · 5 A4 for ₹375 · 5 A5 for ₹225 — applied automatically
       </Link>
 
       <header className="sticky top-0 z-30 border-b border-[var(--xp-border)] bg-[var(--xp-bg)]/90 backdrop-blur">

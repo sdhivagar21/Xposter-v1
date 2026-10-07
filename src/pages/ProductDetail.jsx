@@ -11,7 +11,7 @@ import LoadingScreen from "../components/LoadingScreen.jsx";
 
 export default function ProductDetail() {
   const { id } = useParams();
-  const { addToCart } = useCart();
+  const { addToCart, setDrawerOpen } = useCart();
   const { isWishlisted, toggleWishlist } = useWishlist();
 
   const [product, setProduct] = useState(null);
@@ -66,7 +66,7 @@ export default function ProductDetail() {
   function handleAddToCart() {
     addToCart(product, 1, selectedSize);
     setAdded(true);
-    setTimeout(() => setAdded(false), 2000);
+    setTimeout(() => setAdded(false), 4000);
   }
 
   async function handleReviewSubmit(e) {
@@ -162,6 +162,15 @@ export default function ProductDetail() {
               </svg>
             </button>
           </div>
+          {added && (
+            <button
+              type="button"
+              onClick={() => setDrawerOpen(true)}
+              className="mt-3 text-sm text-[var(--xp-accent-bright)] underline underline-offset-4"
+            >
+              Added to your cart — View cart
+            </button>
+          )}
         </div>
       </div>
 
