@@ -3,9 +3,9 @@ import { useParams, Link, Navigate } from "react-router-dom";
 import { fetchProduct, fetchRelatedProducts, submitReview, averageRating } from "../api/products.js";
 import { useCart } from "../context/CartContext.jsx";
 import { useWishlist } from "../context/WishlistContext.jsx";
-import { SIZES, PACK_DEALS, packSaving, getSizeBySlug } from "../data/categories.js";
+import { SIZES } from "../data/categories.js";
 import PosterImage from "../components/PosterImage.jsx";
-import ProductCard from "../components/ProductCard.jsx";
+import ProductCard, { PackDealCards } from "../components/ProductCard.jsx";
 import StarRating from "../components/StarRating.jsx";
 import LoadingScreen from "../components/LoadingScreen.jsx";
 
@@ -134,12 +134,7 @@ export default function ProductDetail() {
                 </button>
               ))}
             </div>
-            {PACK_DEALS.map((deal) => (
-              <p key={deal.size} className="mt-2 text-xs text-[var(--xp-accent-bright)]">
-                {getSizeBySlug(deal.size)?.label} deal: buy {deal.qty} {getSizeBySlug(deal.size)?.label} posters for just
-                ₹{deal.price} (save ₹{packSaving(deal)}).
-              </p>
-            ))}
+            <PackDealCards selectedSlug={selectedSize.slug} />
           </div>
 
           <div className="mt-8 flex gap-3">
