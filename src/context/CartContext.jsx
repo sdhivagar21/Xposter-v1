@@ -47,9 +47,7 @@ export function CartProvider({ children }) {
         },
       ];
     });
-    // The drawer no longer pops open on add - shoppers stay on the poster
-    // (the header badge and the "Added" button confirm it); they open the
-    // cart themselves from the header or the "View cart" link.
+    setDrawerOpen(true);
   }
 
   function updateQty(key, qty) {
