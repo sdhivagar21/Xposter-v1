@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { getCategoryName, SIZES } from "../data/categories.js";
 import { fetchAllProducts, getCachedAll } from "../api/products.js";
-import { submitCustomPosterOrder } from "../api/orders.js";
+import { submitCustomPosterOrder, enhanceCustomImage } from "../api/orders.js";
 import ProductCard from "../components/ProductCard.jsx";
 import { sortTamilMovies } from "../utils/tamilMoviesOrder.js";
 
@@ -142,6 +142,53 @@ function CustomPosterForm() {
   const [submitted, setSubmitted] = useState(false);
   const fileInputRef = useRef(null);
 
+  // Enhancement: as soon as there's an image (and again if the size changes)
+  // it's sent to the backend, which upscales/cleans it to 300 DPI for that
+  // size and hosts the result. The customer sees the enhanced image before
+  // submitting, and the order then just references it.
+  const [enhanced, setEnhanced] = useState(null);
+  const [enhancing, setEnhancing] = useState(false);
+  const [enhanceError, setEnhanceError] = useState(null);
+  const enhanceRun = useRef(0);
+
+  useEffect(() => {
+    const link = imageLink.trim();
+    const hasSource = mode === "upload" ? !!file : /^https?:\/\/\S+$/i.test(link);
+    setEnhanced(null);
+    setEnhanceError(null);
+    if (!hasSource) {
+      setEnhancing(false);
+      return;
+    }
+    const run = ++enhanceRun.current;
+    setEnhancing(true);
+    const timer = setTimeout(
+      () => {
+        const fd = new FormData();
+        fd.append("size", selectedSize.slug);
+        if (mode === "upload") fd.append("image", file);
+        else fd.append("imageLink", link);
+        enhanceCustomImage(fd)
+          .then((data) => {
+            if (run !== enhanceRun.current) return;
+            setEnhanced(data);
+            setPreviewLoaded(false);
+          })
+          .catch((err) => {
+            if (run !== enhanceRun.current) return;
+            setEnhanceError(
+              err.response?.data?.message || "Couldn't enhance that image right now - please try again."
+            );
+          })
+          .finally(() => {
+            if (run === enhanceRun.current) setEnhancing(false);
+          });
+      },
+      mode === "link" ? 800 : 0
+    );
+    return () => clearTimeout(timer);
+  }, [mode, file, imageLink, selectedSize]);
+
   function handleFileChange(e) {
     const picked = e.target.files?.[0];
     if (!picked) return;
@@ -175,6 +222,8 @@ function CustomPosterForm() {
     if (!form.address.trim()) next.address = "Enter a delivery address.";
     if (mode === "upload" && !file) next.image = "Choose an image to upload.";
     if (mode === "link" && !imageLink.trim()) next.image = "Paste a link to your image.";
+    if (!next.image && enhancing) next.image = "Hold on - we're still enhancing your image.";
+    if (!next.image && !enhanced) next.image = enhanceError || "We couldn't enhance that image - try another.";
     setErrors(next);
     return Object.keys(next).length === 0;
   }
@@ -193,11 +242,10 @@ function CustomPosterForm() {
     formData.append("phone", form.phone);
     formData.append("address", form.address);
     formData.append("notes", form.notes);
-    if (mode === "upload" && file) {
-      formData.append("image", file);
-    } else {
-      formData.append("imageLink", imageLink.trim());
-    }
+    // The image was already enhanced and hosted in the preview step - the
+    // order just points at it (the server re-checks the id and reads its real
+    // size), so nothing is uploaded a second time.
+    formData.append("enhancedPublicId", enhanced.publicId);
 
     try {
       await submitCustomPosterOrder(formData);
@@ -205,6 +253,7 @@ function CustomPosterForm() {
       setFile(null);
       setFilePreview(null);
       setImageLink("");
+      setEnhanced(null);
       setForm({ name: "", email: "", phone: "", address: "", notes: "" });
       if (fileInputRef.current) fileInputRef.current.value = "";
     } catch (err) {
@@ -244,8 +293,15 @@ function CustomPosterForm() {
 
       <div className="mt-10 grid gap-10 md:grid-cols-[1fr_1.2fr]">
         <div>
-          <div className="poster-frame flex aspect-[3/4] items-center justify-center overflow-hidden">
-            {mode === "upload" && filePreview ? (
+          <div className="poster-frame relative flex aspect-[3/4] items-center justify-center overflow-hidden">
+            {enhanced ? (
+              <img
+                src={enhanced.url}
+                alt="Your enhanced poster preview"
+                className={`h-full w-full object-contain ${previewLoaded ? "loaded" : ""}`}
+                onLoad={() => setPreviewLoaded(true)}
+              />
+            ) : mode === "upload" && filePreview ? (
               <img
                 src={filePreview}
                 alt="Your poster preview"
@@ -265,7 +321,24 @@ function CustomPosterForm() {
             ) : (
               <span className="poster-fallback">Your poster will appear here</span>
             )}
+            {enhancing && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black/70 text-center">
+                <span className="h-8 w-8 animate-spin rounded-full border-2 border-[var(--xp-accent)] border-t-transparent" />
+                <p className="px-6 text-sm text-[var(--xp-accent-bright)]">
+                  Enhancing to print quality for {selectedSize.label}…
+                </p>
+              </div>
+            )}
           </div>
+          {enhanced && !enhancing && (
+            <p className="mt-3 border border-[var(--xp-accent-dim)] bg-[var(--xp-accent)]/10 px-3 py-2 text-xs text-[var(--xp-accent-bright)]">
+              ✓ Print-ready {selectedSize.label} · {enhanced.width}×{enhanced.height}px at {enhanced.dpi} DPI
+              {enhanced.upscaled
+                ? ` (enhanced from ${enhanced.originalWidth}×${enhanced.originalHeight}px)`
+                : " (already high quality)"}
+            </p>
+          )}
+          {enhanceError && !enhancing && <p className="mt-3 text-xs text-white/70">{enhanceError}</p>}
         </div>
 
         <form onSubmit={handleSubmit} noValidate className="space-y-6">
@@ -317,7 +390,7 @@ function CustomPosterForm() {
             )}
             {errors.image && <p className="mt-1 text-xs text-white/70">{errors.image}</p>}
             <p className="mt-2 text-xs text-white/40">
-              We'll check the image is sharp enough to print well at the size you pick below.
+              Any quality works - we automatically enhance your image to print-ready quality for the size you pick below.
             </p>
           </div>
 
@@ -421,7 +494,7 @@ function CustomPosterForm() {
             </span>
             <button
               type="submit"
-              disabled={submitting}
+              disabled={submitting || enhancing}
               className="btn-primary px-8 py-3.5 text-sm font-medium"
             >
               {submitting ? "Submitting…" : "Submit poster"}

@@ -19,3 +19,13 @@ export async function submitCustomPosterOrder(formData) {
   const { data } = await axios.post(`${apiClient.defaults.baseURL}/orders/custom`, formData);
   return data;
 }
+
+// Enhances a customer's uploaded file / pasted link to print quality for the
+// chosen size and returns the hosted result for a live preview. Same bare
+// axios + FormData reasoning as above.
+export async function enhanceCustomImage(formData) {
+  const { data } = await axios.post(`${apiClient.defaults.baseURL}/orders/custom/enhance`, formData, {
+    timeout: 120000,
+  });
+  return data;
+}
