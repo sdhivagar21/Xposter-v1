@@ -49,7 +49,7 @@ export default function CartDrawer() {
 
         {items.length === 0 ? (
           <div className="flex flex-1 flex-col items-center justify-center gap-4 px-6 text-center">
-            <p className="text-white/50">Your cart is empty.</p>
+            <p className="text-white/65">Your cart is empty.</p>
             <Link
               to="/collections"
               onClick={() => setDrawerOpen(false)}
@@ -118,7 +118,7 @@ export default function CartDrawer() {
                   <div className="flex flex-1 flex-col justify-between">
                     <div>
                       <p className="text-sm font-medium">{item.name}</p>
-                      {item.sizeLabel && <p className="text-xs text-white/40">{item.sizeLabel}</p>}
+                      {item.sizeLabel && <p className="text-xs text-white/60">{item.sizeLabel}</p>}
                     </div>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center border border-[var(--xp-border-strong)]">
@@ -143,7 +143,7 @@ export default function CartDrawer() {
                   </div>
                   <button
                     onClick={() => removeFromCart(item.key)}
-                    className="self-start text-xs text-white/40 underline-offset-2 transition-colors hover:text-white hover:underline"
+                    className="self-start text-xs text-white/60 underline-offset-2 transition-colors hover:text-white hover:underline"
                     aria-label={`Remove ${item.name} from cart`}
                   >
                     Remove

@@ -93,11 +93,11 @@ function DeliveryPopup({ onClose }) {
         </Link>
         <button
           onClick={onClose}
-          className="relative mx-auto mt-3 block text-xs text-white/40 underline-offset-2 transition-colors hover:text-white hover:underline"
+          className="relative mx-auto mt-3 block text-xs text-white/60 underline-offset-2 transition-colors hover:text-white hover:underline"
         >
           Maybe later
         </button>
-        <p className="relative mt-4 text-center text-[11px] text-white/30">
+        <p className="relative mt-4 text-center text-[11px] text-white/55">
           Available for Chennai addresses. Standard delivery elsewhere.
         </p>
       </div>

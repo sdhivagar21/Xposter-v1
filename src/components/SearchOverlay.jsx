@@ -117,7 +117,7 @@ export default function SearchOverlay({ open, onClose }) {
             onKeyDown={handleKeyDown}
             placeholder="Search posters..."
             autoComplete="off"
-            className="w-full bg-transparent text-2xl outline-none placeholder:text-white/30"
+            className="w-full bg-transparent text-2xl outline-none placeholder:text-white/55"
           />
           <button type="submit" className="btn-primary shrink-0 px-4 py-2 text-sm">
             Go
@@ -127,11 +127,11 @@ export default function SearchOverlay({ open, onClose }) {
         {showDropdown && (
           <div className="mt-2 max-h-[60vh] overflow-y-auto border border-[var(--xp-border)] bg-[var(--xp-bg-elevated)]">
             {loading && suggestions.length === 0 && (
-              <p className="px-4 py-4 text-sm text-white/40">Searching...</p>
+              <p className="px-4 py-4 text-sm text-white/60">Searching...</p>
             )}
 
             {!loading && suggestions.length === 0 && (
-              <p className="px-4 py-4 text-sm text-white/40">No posters match &quot;{query.trim()}&quot;.</p>
+              <p className="px-4 py-4 text-sm text-white/60">No posters match &quot;{query.trim()}&quot;.</p>
             )}
 
             {suggestions.map((product, i) => (
@@ -168,7 +168,7 @@ export default function SearchOverlay({ open, onClose }) {
           </div>
         )}
 
-        <p className="mt-4 text-sm text-white/40">Search by poster name or category — try "anime" or "motivational".</p>
+        <p className="mt-4 text-sm text-white/60">Search by poster name or category — try "anime" or "motivational".</p>
       </form>
     </div>
   );

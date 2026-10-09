@@ -6,7 +6,7 @@ export default function AdminLayout({ children }) {
 
   const linkClass = ({ isActive }) =>
     `border-b-2 pb-1 text-sm transition-colors ${
-      isActive ? "border-[var(--xp-accent)] text-[var(--xp-accent-bright)]" : "border-transparent text-white/50 hover:text-white"
+      isActive ? "border-[var(--xp-accent)] text-[var(--xp-accent-bright)]" : "border-transparent text-white/65 hover:text-white"
     }`;
 
   return (
@@ -26,7 +26,7 @@ export default function AdminLayout({ children }) {
               </NavLink>
             </nav>
           </div>
-          <div className="flex items-center gap-4 text-sm text-white/50">
+          <div className="flex items-center gap-4 text-sm text-white/65">
             <span>{admin?.email}</span>
             <button
               onClick={logout}

@@ -111,7 +111,7 @@ export default function AdminDashboard() {
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             placeholder="Search by name..."
-            className="border border-[var(--xp-border-strong)] bg-transparent px-3 py-2 text-sm text-white/80 placeholder:text-white/30"
+            className="border border-[var(--xp-border-strong)] bg-transparent px-3 py-2 text-sm text-white/80 placeholder:text-white/55"
           />
           <button type="submit" className="btn-outline px-4 py-2 text-xs">
             Search
@@ -123,7 +123,7 @@ export default function AdminDashboard() {
                 setSearchInput("");
                 setQ("");
               }}
-              className="text-xs text-white/50 underline-offset-2 hover:text-white hover:underline"
+              className="text-xs text-white/65 underline-offset-2 hover:text-white hover:underline"
             >
               Clear
             </button>
@@ -131,17 +131,17 @@ export default function AdminDashboard() {
         </form>
 
         {!loading && (
-          <span className="text-xs text-white/40">
+          <span className="text-xs text-white/60">
             {total} {total === 1 ? "product" : "products"}
           </span>
         )}
       </div>
 
-      {error && <p className="mt-6 text-sm text-white/50">{error}</p>}
+      {error && <p className="mt-6 text-sm text-white/65">{error}</p>}
       {loading && <LoadingScreen />}
 
       {!loading && products.length === 0 && (
-        <p className="mt-10 text-sm text-white/40">
+        <p className="mt-10 text-sm text-white/60">
           {category || q ? "No products match that filter." : "No products yet - add your first poster above."}
         </p>
       )}
@@ -150,7 +150,7 @@ export default function AdminDashboard() {
         <div className="mt-8 overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead>
-              <tr className="border-b border-[var(--xp-border)] text-white/40">
+              <tr className="border-b border-[var(--xp-border)] text-white/60">
                 <th className="py-3 pr-4 font-normal">Photo</th>
                 <th className="py-3 pr-4 font-normal">Name</th>
                 <th className="py-3 pr-4 font-normal">Category</th>

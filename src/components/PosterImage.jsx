@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { optimizedImage } from "../utils/cloudinaryUrl.js";
 
 // Products now carry a full Cloudinary URL from the backend. This still
@@ -10,11 +10,28 @@ import { optimizedImage } from "../utils/cloudinaryUrl.js";
 // `width` is the pixel width to actually request from Cloudinary (about 2x
 // the on-screen size covers retina screens). Keeps the site fast by never
 // shipping the full original upload for a small thumbnail.
-export default function PosterImage({ src, alt, className = "", aspect = "aspect-[2/3]", width = 480, priority = false }) {
+export default function PosterImage({ src, alt, className = "", aspect = "aspect-[2/3]", width = 480, priority = false, defer = false }) {
   const [broken, setBroken] = useState(false);
   // Priority (above-the-fold) posters skip the fade-in so they paint the moment
   // their bytes arrive instead of waiting on a state update + 0.4s transition.
   const [loaded, setLoaded] = useState(priority);
+  // `defer`: posters that start off-screen (most of the scrolling marquee) don't
+  // fetch until the page has finished loading, so they never compete with the
+  // handful of posters visible on first paint.
+  const [ready, setReady] = useState(!defer);
+  useEffect(() => {
+    if (!defer) return;
+    let timer;
+    const go = () => {
+      timer = setTimeout(() => setReady(true), 800);
+    };
+    if (document.readyState === "complete") go();
+    else window.addEventListener("load", go, { once: true });
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("load", go);
+    };
+  }, [defer]);
   const showLoading = !broken && src && !loaded;
 
   return (
@@ -24,7 +41,7 @@ export default function PosterImage({ src, alt, className = "", aspect = "aspect
           <img src="/logo-mark.webp" alt="" width="56" height="20" className="animate-logo-pulse h-4 w-auto sm:h-5" />
         </div>
       )}
-      {!broken && src && (
+      {!broken && src && ready && (
         <img
           src={optimizedImage(src, width)}
           alt={alt}

@@ -69,7 +69,7 @@ export default function CategoryPage() {
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="font-display text-4xl sm:text-5xl">{categoryName}</h1>
-          <p className="mt-2 text-sm text-white/40">
+          <p className="mt-2 text-sm text-white/60">
             {loading ? "Loading..." : `${total} ${total === 1 ? "poster" : "posters"}`}
           </p>
         </div>
@@ -91,11 +91,11 @@ export default function CategoryPage() {
         </div>
       </div>
 
-      {error && <p className="mt-10 text-sm text-white/40">{error}</p>}
+      {error && <p className="mt-10 text-sm text-white/60">{error}</p>}
 
       {!error && !loading && products.length === 0 && (
         <div className="mt-16 text-center">
-          <p className="text-white/50">No posters in this category yet.</p>
+          <p className="text-white/65">No posters in this category yet.</p>
           <Link to="/collections" className="btn-outline mt-4 inline-block px-5 py-2.5 text-sm">
             Browse other collections
           </Link>
@@ -287,7 +287,7 @@ function CustomPosterForm() {
   return (
     <div className="mx-auto max-w-4xl px-5 py-14">
       <h1 className="font-display text-4xl sm:text-5xl">Customizable Posters</h1>
-      <p className="mt-3 max-w-lg text-white/50">
+      <p className="mt-3 max-w-lg text-white/65">
         Upload your own image or paste a link to one, pick a size, and we'll print it — same rates as every other poster on XPOSTERS.
       </p>
 
@@ -389,13 +389,13 @@ function CustomPosterForm() {
               />
             )}
             {errors.image && <p className="mt-1 text-xs text-white/70">{errors.image}</p>}
-            <p className="mt-2 text-xs text-white/40">
+            <p className="mt-2 text-xs text-white/60">
               Any quality works - we automatically enhance your image to print-ready quality for the size you pick below.
             </p>
           </div>
 
           <div>
-            <p className="mb-2 text-xs text-white/40">Size</p>
+            <p className="mb-2 text-xs text-white/60">Size</p>
             <div className="flex flex-wrap gap-2">
               {SIZES.map((s) => (
                 <button
@@ -416,7 +416,7 @@ function CustomPosterForm() {
 
           <div className="space-y-5">
             <div>
-              <label className="mb-1 block text-xs text-white/40" htmlFor="cp-name">
+              <label className="mb-1 block text-xs text-white/60" htmlFor="cp-name">
                 Full name
               </label>
               <input
@@ -430,7 +430,7 @@ function CustomPosterForm() {
             </div>
 
             <div>
-              <label className="mb-1 block text-xs text-white/40" htmlFor="cp-email">
+              <label className="mb-1 block text-xs text-white/60" htmlFor="cp-email">
                 Email
               </label>
               <input
@@ -444,7 +444,7 @@ function CustomPosterForm() {
             </div>
 
             <div>
-              <label className="mb-1 block text-xs text-white/40" htmlFor="cp-phone">
+              <label className="mb-1 block text-xs text-white/60" htmlFor="cp-phone">
                 Phone (10 digits)
               </label>
               <input
@@ -458,7 +458,7 @@ function CustomPosterForm() {
             </div>
 
             <div>
-              <label className="mb-1 block text-xs text-white/40" htmlFor="cp-address">
+              <label className="mb-1 block text-xs text-white/60" htmlFor="cp-address">
                 Delivery address
               </label>
               <textarea
@@ -472,7 +472,7 @@ function CustomPosterForm() {
             </div>
 
             <div>
-              <label className="mb-1 block text-xs text-white/40" htmlFor="cp-notes">
+              <label className="mb-1 block text-xs text-white/60" htmlFor="cp-notes">
                 Notes (optional)
               </label>
               <textarea

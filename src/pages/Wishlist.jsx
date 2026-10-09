@@ -44,7 +44,7 @@ export default function Wishlist() {
   return (
     <div className="mx-auto max-w-6xl px-5 py-14">
       <h1 className="font-display text-4xl sm:text-5xl">Wishlist</h1>
-      <p className="mt-2 text-sm text-white/40">
+      <p className="mt-2 text-sm text-white/60">
         {loading ? "Loadingâ€¦" : `${products.length} ${products.length === 1 ? "poster" : "posters"} saved`}
       </p>
 
@@ -52,7 +52,7 @@ export default function Wishlist() {
         <LoadingScreen />
       ) : products.length === 0 ? (
         <div className="mt-16 text-center">
-          <p className="text-white/50">Nothing saved yet. Tap the heart on any poster to keep it here.</p>
+          <p className="text-white/65">Nothing saved yet. Tap the heart on any poster to keep it here.</p>
           <Link to="/collections" className="btn-outline mt-4 inline-block px-5 py-2.5 text-sm">
             Browse collections
           </Link>
@@ -64,7 +64,7 @@ export default function Wishlist() {
               <ProductCard product={product} className="w-full" />
               <button
                 onClick={() => removeFromWishlist(product.id)}
-                className="mt-2 text-xs text-white/40 underline-offset-2 transition-colors hover:text-white hover:underline"
+                className="mt-2 text-xs text-white/60 underline-offset-2 transition-colors hover:text-white hover:underline"
               >
                 Remove
               </button>

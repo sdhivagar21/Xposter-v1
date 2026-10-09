@@ -99,14 +99,14 @@ export default function ProductDetail() {
         </div>
 
         <div>
-          <Link to={`/collections/${product.category}`} className="text-xs text-white/40 transition-colors hover:text-white">
+          <Link to={`/collections/${product.category}`} className="text-xs text-white/60 transition-colors hover:text-white">
             ← Back to category
           </Link>
           <h1 className="mt-3 font-display text-4xl leading-tight sm:text-5xl">{product.name}</h1>
 
           <div className="mt-3 flex items-center gap-2">
             <StarRating value={avgRating} />
-            <span className="text-sm text-white/40">
+            <span className="text-sm text-white/60">
               {avgRating.toFixed(1)} ({product.reviews.length} {product.reviews.length === 1 ? "review" : "reviews"})
             </span>
           </div>
@@ -117,7 +117,7 @@ export default function ProductDetail() {
           )}
 
           <div className="mt-6">
-            <p className="mb-2 text-xs text-white/40">Size</p>
+            <p className="mb-2 text-xs text-white/60">Size</p>
             <div className="flex flex-wrap gap-2">
               {SIZES.map((s) => (
                 <button
@@ -167,7 +167,7 @@ export default function ProductDetail() {
           <span className="text-3xl">{avgRating.toFixed(1)}</span>
           <div>
             <StarRating value={avgRating} size="text-base" />
-            <p className="text-xs text-white/40">
+            <p className="text-xs text-white/60">
               {product.reviews.length} {product.reviews.length === 1 ? "review" : "reviews"}
             </p>
           </div>
@@ -175,7 +175,7 @@ export default function ProductDetail() {
 
         <div className="mt-8 grid gap-10 md:grid-cols-2">
           <ul className="space-y-6">
-            {product.reviews.length === 0 && <p className="text-sm text-white/40">No reviews yet — be the first.</p>}
+            {product.reviews.length === 0 && <p className="text-sm text-white/60">No reviews yet — be the first.</p>}
             {product.reviews.map((r) => (
               <li key={r.id} className="border-b border-[var(--xp-border)] pb-5">
                 <div className="flex items-center justify-between">
@@ -188,9 +188,9 @@ export default function ProductDetail() {
           </ul>
 
           <form onSubmit={handleReviewSubmit} className="space-y-4 border border-[var(--xp-border)] p-6">
-            <p className="text-sm text-white/40">Leave a review</p>
+            <p className="text-sm text-white/60">Leave a review</p>
             <div>
-              <label className="mb-1 block text-xs text-white/40" htmlFor="review-name">
+              <label className="mb-1 block text-xs text-white/60" htmlFor="review-name">
                 Name
               </label>
               <input
@@ -203,7 +203,7 @@ export default function ProductDetail() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-xs text-white/40" htmlFor="review-rating">
+              <label className="mb-1 block text-xs text-white/60" htmlFor="review-rating">
                 Rating
               </label>
               <select
@@ -220,7 +220,7 @@ export default function ProductDetail() {
               </select>
             </div>
             <div>
-              <label className="mb-1 block text-xs text-white/40" htmlFor="review-comment">
+              <label className="mb-1 block text-xs text-white/60" htmlFor="review-comment">
                 Comment
               </label>
               <textarea

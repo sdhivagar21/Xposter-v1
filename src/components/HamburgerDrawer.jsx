@@ -28,7 +28,7 @@ export default function HamburgerDrawer({ open, onClose }) {
           </button>
         </div>
         <nav className="flex-1 overflow-y-auto px-5 py-4">
-          <p className="mb-3 text-xs text-white/40">Categories</p>
+          <p className="mb-3 text-xs text-white/60">Categories</p>
           <ul className="space-y-1">
             {CATEGORIES.map((cat) => (
               <li key={cat.slug}>

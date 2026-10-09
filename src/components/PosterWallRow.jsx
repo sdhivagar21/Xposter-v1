@@ -15,7 +15,7 @@ export default function PosterWallRow({ products, direction = "left", priority =
             to={`/product/${product.id}`}
             className="group block w-32 shrink-0 sm:w-40"
           >
-            <PosterImage src={product.image} alt={product.name} width={320} priority={priority && i < 4} />
+            <PosterImage src={product.image} alt={product.name} width={320} priority={priority && i < 4} defer={i >= 4} />
           </Link>
         ))}
       </div>

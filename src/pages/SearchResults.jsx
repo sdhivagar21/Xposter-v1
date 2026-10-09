@@ -50,17 +50,17 @@ export default function SearchResults() {
       <h1 className="font-display text-3xl sm:text-4xl">
         Results for "{query}"
       </h1>
-      <p className="mt-2 text-sm text-white/40">
+      <p className="mt-2 text-sm text-white/60">
         {loading ? "Searching..." : `${total} ${total === 1 ? "poster" : "posters"} found`}
       </p>
 
-      {error && <p className="mt-10 text-sm text-white/40">{error}</p>}
+      {error && <p className="mt-10 text-sm text-white/60">{error}</p>}
 
       {!error && loading && <LoadingScreen />}
 
       {!error && !loading && results.length === 0 && (
         <div className="mt-16 text-center">
-          <p className="text-white/50">Nothing matched that search.</p>
+          <p className="text-white/65">Nothing matched that search.</p>
           <Link to="/collections" className="btn-outline mt-4 inline-block px-5 py-2.5 text-sm">
             Browse collections
           </Link>

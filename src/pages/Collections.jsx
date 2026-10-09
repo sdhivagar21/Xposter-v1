@@ -32,10 +32,10 @@ export default function Collections() {
   return (
     <div className="mx-auto max-w-6xl px-5 py-14">
       <h1 className="font-display text-4xl sm:text-5xl">Collections</h1>
-      <p className="mt-3 max-w-md text-white/50">Pick a world and start filling your walls — or upload your own.</p>
+      <p className="mt-3 max-w-md text-white/65">Pick a world and start filling your walls — or upload your own.</p>
 
       {loading && <LoadingScreen />}
-      {error && <p className="mt-10 text-sm text-white/40">{error}</p>}
+      {error && <p className="mt-10 text-sm text-white/60">{error}</p>}
 
       {!loading && !error && (
         <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
@@ -53,7 +53,7 @@ export default function Collections() {
                   </div>
                 )}
                 <p className="mt-3 font-display text-lg tracking-wide">{cat.name}</p>
-                <p className="text-xs text-white/40">
+                <p className="text-xs text-white/60">
                   {isCustom ? "Upload your own design" : `${count} ${count === 1 ? "poster" : "posters"}`}
                 </p>
               </Link>

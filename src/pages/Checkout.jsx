@@ -84,7 +84,7 @@ export default function Checkout() {
       <div className="mt-10 grid gap-10 md:grid-cols-[1.2fr_1fr]">
         <form onSubmit={handlePlaceOrder} noValidate className="space-y-5">
           <div>
-            <label className="mb-1 block text-xs text-white/40" htmlFor="name">
+            <label className="mb-1 block text-xs text-white/60" htmlFor="name">
               Full name
             </label>
             <input
@@ -98,7 +98,7 @@ export default function Checkout() {
           </div>
 
           <div>
-            <label className="mb-1 block text-xs text-white/40" htmlFor="email">
+            <label className="mb-1 block text-xs text-white/60" htmlFor="email">
               Email
             </label>
             <input
@@ -112,7 +112,7 @@ export default function Checkout() {
           </div>
 
           <div>
-            <label className="mb-1 block text-xs text-white/40" htmlFor="phone">
+            <label className="mb-1 block text-xs text-white/60" htmlFor="phone">
               Phone (10 digits)
             </label>
             <input
@@ -126,7 +126,7 @@ export default function Checkout() {
           </div>
 
           <div>
-            <label className="mb-1 block text-xs text-white/40" htmlFor="address">
+            <label className="mb-1 block text-xs text-white/60" htmlFor="address">
               Delivery address
             </label>
             <textarea
@@ -151,7 +151,7 @@ export default function Checkout() {
         </form>
 
         <aside className="h-fit border border-[var(--xp-border)] p-6">
-          <p className="mb-4 text-sm text-white/40">Order summary</p>
+          <p className="mb-4 text-sm text-white/60">Order summary</p>
           <ul className="space-y-3">
             {items.map((item) => (
               <li key={item.key} className="flex justify-between text-sm">
@@ -187,19 +187,19 @@ export default function Checkout() {
             <span>₹{total}</span>
           </div>
           {!discountEligible && (
-            <p className="mt-3 text-xs text-white/40">
+            <p className="mt-3 text-xs text-white/60">
               Add {itemsToNextDiscount} more A3 poster{itemsToNextDiscount === 1 ? "" : "s"} to this order to save 23%.
             </p>
           )}
           {packDeals
             .filter((deal) => deal.toNext > 0)
             .map((deal) => (
-              <p key={deal.size} className="mt-2 text-xs text-white/40">
+              <p key={deal.size} className="mt-2 text-xs text-white/60">
                 Add {deal.toNext} more {deal.label} poster{deal.toNext === 1 ? "" : "s"} to get {deal.qty} {deal.label}{" "}
                 posters for just ₹{deal.price}.
               </p>
             ))}
-          <Link to="/" className="mt-4 block text-center text-xs text-white/40 underline-offset-2 hover:text-white hover:underline">
+          <Link to="/" className="mt-4 block text-center text-xs text-white/60 underline-offset-2 hover:text-white hover:underline">
             ← Continue shopping
           </Link>
         </aside>

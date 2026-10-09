@@ -32,11 +32,11 @@ export default function AdminLogin() {
   return (
     <div className="mx-auto flex min-h-screen max-w-sm flex-col justify-center px-5">
       <h1 className="font-display text-3xl">XPOSTERS ADMIN</h1>
-      <p className="mt-2 text-sm text-white/40">Sign in to manage products and view orders.</p>
+      <p className="mt-2 text-sm text-white/60">Sign in to manage products and view orders.</p>
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-4">
         <div>
-          <label className="mb-1 block text-xs text-white/40" htmlFor="admin-email">
+          <label className="mb-1 block text-xs text-white/60" htmlFor="admin-email">
             Email
           </label>
           <input
@@ -49,7 +49,7 @@ export default function AdminLogin() {
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs text-white/40" htmlFor="admin-password">
+          <label className="mb-1 block text-xs text-white/60" htmlFor="admin-password">
             Password
           </label>
           <input

@@ -52,11 +52,11 @@ export default function OrderSuccess() {
           <div className="mx-auto mt-4 w-fit rounded bg-white p-3">
             <QRCodeSVG value={upiLink} size={180} level="M" />
           </div>
-          <p className="mt-3 text-xs text-white/50">Scan with GPay, PhonePe or Paytm</p>
+          <p className="mt-3 text-xs text-white/65">Scan with GPay, PhonePe or Paytm</p>
           <a href={upiLink} className="btn-primary mt-5 block py-3 text-sm font-medium sm:hidden">
             Pay with GPay / UPI app
           </a>
-          <p className="mt-4 text-xs text-white/40">
+          <p className="mt-4 text-xs text-white/60">
             UPI ID: {UPI_ID}
             <br />
             Keep the order ID {orderId} as the payment note. We confirm your order once the payment reaches us.

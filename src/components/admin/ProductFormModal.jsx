@@ -61,7 +61,7 @@ export default function ProductFormModal({ product, onClose, onSaved }) {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="mb-1 block text-xs text-white/40" htmlFor="p-name">
+            <label className="mb-1 block text-xs text-white/60" htmlFor="p-name">
               Name
             </label>
             <input
@@ -75,7 +75,7 @@ export default function ProductFormModal({ product, onClose, onSaved }) {
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="mb-1 block text-xs text-white/40" htmlFor="p-price">
+              <label className="mb-1 block text-xs text-white/60" htmlFor="p-price">
                 Price (₹)
               </label>
               <input
@@ -88,7 +88,7 @@ export default function ProductFormModal({ product, onClose, onSaved }) {
               />
             </div>
             <div>
-              <label className="mb-1 block text-xs text-white/40" htmlFor="p-category">
+              <label className="mb-1 block text-xs text-white/60" htmlFor="p-category">
                 Category
               </label>
               <select
@@ -107,7 +107,7 @@ export default function ProductFormModal({ product, onClose, onSaved }) {
           </div>
 
           <div>
-            <label className="mb-1 block text-xs text-white/40" htmlFor="p-description">
+            <label className="mb-1 block text-xs text-white/60" htmlFor="p-description">
               Description (optional)
             </label>
             <textarea
@@ -120,7 +120,7 @@ export default function ProductFormModal({ product, onClose, onSaved }) {
           </div>
 
           <div>
-            <label className="mb-1 block text-xs text-white/40" htmlFor="p-image">
+            <label className="mb-1 block text-xs text-white/60" htmlFor="p-image">
               Poster image {isEdit && "(leave empty to keep current photo)"}
             </label>
             <input

@@ -8,13 +8,13 @@ export default function Footer() {
         <div className="grid gap-10 sm:grid-cols-3">
           <div>
             <p className="font-display text-2xl">XPOSTERS</p>
-            <p className="mt-3 max-w-xs text-sm text-white/50">
+            <p className="mt-3 max-w-xs text-sm text-white/65">
               Bold prints for people who like their walls to say something.
               Movies, machines, heroes, and a little chaos — printed and shipped.
             </p>
           </div>
           <div>
-            <p className="mb-3 text-sm text-white/40">Categories</p>
+            <p className="mb-3 text-sm text-white/60">Categories</p>
             <ul className="grid grid-cols-2 gap-2 text-sm">
               {CATEGORIES.map((cat) => (
                 <li key={cat.slug}>
@@ -26,7 +26,7 @@ export default function Footer() {
             </ul>
           </div>
           <div>
-            <p className="mb-3 text-sm text-white/40">Shop</p>
+            <p className="mb-3 text-sm text-white/60">Shop</p>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link to="/collections" className="text-white/70 transition-colors hover:text-[var(--xp-accent-bright)]">
@@ -41,7 +41,7 @@ export default function Footer() {
             </ul>
           </div>
         </div>
-        <div className="mt-12 flex items-center justify-between border-t border-[var(--xp-border)] pt-6 text-xs text-white/30">
+        <div className="mt-12 flex items-center justify-between border-t border-[var(--xp-border)] pt-6 text-xs text-white/55">
           <span>© {new Date().getFullYear()} XPOSTERS. All rights reserved.</span>
           <Link to="/admin/login" className="transition-colors hover:text-white/60">Admin</Link>
         </div>

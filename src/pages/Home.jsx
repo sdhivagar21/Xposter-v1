@@ -100,7 +100,7 @@ export default function Home() {
       </section>
 
       {error && (
-        <p className="mx-auto max-w-6xl px-5 pb-10 text-center text-sm text-white/40">{error}</p>
+        <p className="mx-auto max-w-6xl px-5 pb-10 text-center text-sm text-white/60">{error}</p>
       )}
 
       {/* Auto-scrolling poster wall */}
@@ -125,10 +125,10 @@ export default function Home() {
         {loading && <LoadingScreen className="min-h-[600px]" />}
         {!loading &&
           categoriesWithProducts.map((cat) => (
-            <div key={cat.slug}>
+            <div key={cat.slug} style={{ contentVisibility: "auto", containIntrinsicSize: "auto 380px" }}>
               <div className="mb-4 flex items-baseline justify-between">
                 <h2 className="font-display text-2xl sm:text-3xl">{cat.name}</h2>
-                <Link to={`/collections/${cat.slug}`} className="text-sm text-white/50 transition-colors hover:text-white">
+                <Link to={`/collections/${cat.slug}`} className="text-sm text-white/65 transition-colors hover:text-white">
                   View all
                 </Link>
               </div>
