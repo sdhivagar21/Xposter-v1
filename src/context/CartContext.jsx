@@ -44,6 +44,7 @@ export function CartProvider({ children }) {
           sizeLabel: chosenSize.label,
           price: chosenSize.price,
           qty,
+          ...(product.custom ? { custom: product.custom } : {}),
         },
       ];
     });

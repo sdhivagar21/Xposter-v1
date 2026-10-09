@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { getCategoryName, SIZES } from "../data/categories.js";
 import { fetchAllProducts, getCachedAll } from "../api/products.js";
-import { submitCustomPosterOrder, enhanceCustomImage } from "../api/orders.js";
+import { enhanceCustomImage } from "../api/orders.js";
+import { useCart } from "../context/CartContext.jsx";
 import ProductCard from "../components/ProductCard.jsx";
 import { sortTamilMovies } from "../utils/tamilMoviesOrder.js";
 
@@ -164,11 +165,9 @@ function CustomPosterForm() {
   const [previewLoaded, setPreviewLoaded] = useState(false);
   const [imageLink, setImageLink] = useState("");
   const [selectedSize, setSelectedSize] = useState(SIZES[0]);
-  const [form, setForm] = useState({ name: "", email: "", phone: "", address: "", notes: "" });
+  const [notes, setNotes] = useState("");
   const [errors, setErrors] = useState({});
-  const [submitting, setSubmitting] = useState(false);
-  const [serverError, setServerError] = useState(null);
-  const [submitted, setSubmitted] = useState(false);
+  const { addToCart } = useCart();
   const fileInputRef = useRef(null);
 
   // Enhancement: as soon as there's an image (and again if the size changes)
@@ -240,16 +239,8 @@ function CustomPosterForm() {
     }
   }
 
-  function handleChange(field, value) {
-    setForm((f) => ({ ...f, [field]: value }));
-  }
-
   function validate() {
     const next = {};
-    if (!form.name.trim()) next.name = "Enter your name.";
-    if (!EMAIL_RE.test(form.email.trim())) next.email = "Enter a valid email address.";
-    if (!PHONE_RE.test(form.phone.trim())) next.phone = "Enter a 10-digit phone number.";
-    if (!form.address.trim()) next.address = "Enter a delivery address.";
     if (mode === "upload" && !file) next.image = "Choose an image to upload.";
     if (mode === "link" && !imageLink.trim()) next.image = "Paste a link to your image.";
     if (!next.image && enhancing) next.image = "Hold on - we're still enhancing your image.";
@@ -258,60 +249,35 @@ function CustomPosterForm() {
     return Object.keys(next).length === 0;
   }
 
-  async function handleSubmit(e) {
+  // Adds the already-enhanced poster to the cart (opens the cart drawer), then
+  // clears the form so another custom poster can be added. Checkout collects
+  // the delivery details, so pack deals and the UPI QR work as for any poster.
+  function handleAddToCart(e) {
     e.preventDefault();
     if (!validate()) return;
-
-    setSubmitting(true);
-    setServerError(null);
-
-    const formData = new FormData();
-    formData.append("size", selectedSize.slug);
-    formData.append("name", form.name);
-    formData.append("email", form.email);
-    formData.append("phone", form.phone);
-    formData.append("address", form.address);
-    formData.append("notes", form.notes);
-    // The image was already enhanced and hosted in the preview step - the
-    // order just points at it (the server re-checks the id and reads its real
-    // size), so nothing is uploaded a second time.
-    formData.append("enhancedPublicId", enhanced.publicId);
-
-    try {
-      await submitCustomPosterOrder(formData);
-      setSubmitted(true);
-      setFile(null);
-      setFilePreview(null);
-      setImageLink("");
-      setEnhanced(null);
-      setForm({ name: "", email: "", phone: "", address: "", notes: "" });
-      if (fileInputRef.current) fileInputRef.current.value = "";
-    } catch (err) {
-      setServerError(
-        err.response?.data?.message || "Couldn't submit your poster right now — please try again in a moment."
-      );
-    } finally {
-      setSubmitting(false);
-    }
-  }
-
-  if (submitted) {
-    return (
-      <div className="mx-auto max-w-2xl px-5 py-20 text-center">
-        <h1 className="font-display text-4xl sm:text-5xl">Got it!</h1>
-        <p className="mt-4 text-white/60">
-          Your poster's on its way to us. We'll take a look and email you at the address you gave once it's confirmed.
-        </p>
-        <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <button onClick={() => setSubmitted(false)} className="btn-outline px-6 py-3 text-sm">
-            Submit another
-          </button>
-          <Link to="/collections" className="btn-primary px-6 py-3 text-sm font-medium">
-            Browse posters
-          </Link>
-        </div>
-      </div>
+    addToCart(
+      {
+        id: enhanced.publicId,
+        name: `Custom Poster (${selectedSize.label})`,
+        image: enhanced.url,
+        category: "customizable-posters",
+        custom: {
+          imagePublicId: enhanced.publicId,
+          width: enhanced.width,
+          height: enhanced.height,
+          notes: notes.trim().slice(0, 500),
+        },
+      },
+      1,
+      selectedSize
     );
+    setFile(null);
+    setFilePreview(null);
+    setImageLink("");
+    setEnhanced(null);
+    setNotes("");
+    setErrors({});
+    if (fileInputRef.current) fileInputRef.current.value = "";
   }
 
   return (
@@ -371,7 +337,7 @@ function CustomPosterForm() {
           {enhanceError && !enhancing && <p className="mt-3 text-xs text-white/70">{enhanceError}</p>}
         </div>
 
-        <form onSubmit={handleSubmit} noValidate className="space-y-6">
+        <form onSubmit={handleAddToCart} noValidate className="space-y-6">
           <div>
             <div className="flex gap-2">
               <button
@@ -444,79 +410,19 @@ function CustomPosterForm() {
             </div>
           </div>
 
-          <div className="space-y-5">
-            <div>
-              <label className="mb-1 block text-xs text-white/60" htmlFor="cp-name">
-                Full name
-              </label>
-              <input
-                id="cp-name"
-                type="text"
-                value={form.name}
-                onChange={(e) => handleChange("name", e.target.value)}
-                className="w-full border border-[var(--xp-border-strong)] bg-transparent px-3 py-2.5 text-sm outline-none focus:border-[var(--xp-accent)]"
-              />
-              {errors.name && <p className="mt-1 text-xs text-white/70">{errors.name}</p>}
-            </div>
-
-            <div>
-              <label className="mb-1 block text-xs text-white/60" htmlFor="cp-email">
-                Email
-              </label>
-              <input
-                id="cp-email"
-                type="email"
-                value={form.email}
-                onChange={(e) => handleChange("email", e.target.value)}
-                className="w-full border border-[var(--xp-border-strong)] bg-transparent px-3 py-2.5 text-sm outline-none focus:border-[var(--xp-accent)]"
-              />
-              {errors.email && <p className="mt-1 text-xs text-white/70">{errors.email}</p>}
-            </div>
-
-            <div>
-              <label className="mb-1 block text-xs text-white/60" htmlFor="cp-phone">
-                Phone (10 digits)
-              </label>
-              <input
-                id="cp-phone"
-                type="tel"
-                value={form.phone}
-                onChange={(e) => handleChange("phone", e.target.value.replace(/[^\d]/g, "").slice(0, 10))}
-                className="w-full border border-[var(--xp-border-strong)] bg-transparent px-3 py-2.5 text-sm outline-none focus:border-[var(--xp-accent)]"
-              />
-              {errors.phone && <p className="mt-1 text-xs text-white/70">{errors.phone}</p>}
-            </div>
-
-            <div>
-              <label className="mb-1 block text-xs text-white/60" htmlFor="cp-address">
-                Delivery address
-              </label>
-              <textarea
-                id="cp-address"
-                rows={3}
-                value={form.address}
-                onChange={(e) => handleChange("address", e.target.value)}
-                className="w-full resize-none border border-[var(--xp-border-strong)] bg-transparent px-3 py-2.5 text-sm outline-none focus:border-[var(--xp-accent)]"
-              />
-              {errors.address && <p className="mt-1 text-xs text-white/70">{errors.address}</p>}
-            </div>
-
-            <div>
-              <label className="mb-1 block text-xs text-white/60" htmlFor="cp-notes">
-                Notes (optional)
-              </label>
-              <textarea
-                id="cp-notes"
-                rows={2}
-                value={form.notes}
-                onChange={(e) => handleChange("notes", e.target.value)}
-                placeholder="Cropping, framing, anything else we should know"
-                className="w-full resize-none border border-[var(--xp-border-strong)] bg-transparent px-3 py-2.5 text-sm outline-none focus:border-[var(--xp-accent)]"
-              />
-            </div>
+          <div>
+            <label className="mb-1 block text-xs text-white/60" htmlFor="cp-notes">
+              Notes (optional)
+            </label>
+            <textarea
+              id="cp-notes"
+              rows={2}
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              placeholder="Cropping, framing, anything else we should know"
+              className="w-full resize-none border border-[var(--xp-border-strong)] bg-transparent px-3 py-2.5 text-sm outline-none focus:border-[var(--xp-accent)]"
+            />
           </div>
-
-          {serverError && <p className="text-xs text-white/70">{serverError}</p>}
 
           <div className="flex items-center justify-between border-t border-[var(--xp-border)] pt-5">
             <span className="text-sm text-white/60">
@@ -524,10 +430,10 @@ function CustomPosterForm() {
             </span>
             <button
               type="submit"
-              disabled={submitting || enhancing}
+              disabled={enhancing}
               className="btn-primary px-8 py-3.5 text-sm font-medium"
             >
-              {submitting ? "Submitting…" : "Submit poster"}
+              {enhancing ? "Enhancing…" : "Add to cart"}
             </button>
           </div>
         </form>

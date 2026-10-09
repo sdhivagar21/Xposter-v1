@@ -50,7 +50,9 @@ export default function Checkout() {
     setServerError(null);
 
     const orderItems = items.map((item) => ({
-      product: item.id,
+      // Custom posters have no product record - they carry their hosted
+      // image id, pixel size and notes instead.
+      ...(item.custom ? item.custom : { product: item.id }),
       name: item.name,
       price: item.price,
       image: item.image,
