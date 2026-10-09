@@ -115,6 +115,35 @@ export default function CategoryPage() {
   );
 }
 
+const MAX_UPLOAD_SIDE = 5200; // the biggest print (A3 @ 300 DPI) is 3510x4950
+
+// Camera/phone originals can be huge. Anything over ~4MB or ~5200px is
+// downscaled in the browser first (still more pixels than any print needs),
+// so big files upload quickly and never hit a size limit. Falls back to the
+// original file if the browser can't decode it.
+async function shrinkForUpload(file) {
+  try {
+    if (!file.type.startsWith("image/")) return file;
+    const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
+    const longSide = Math.max(bitmap.width, bitmap.height);
+    if (file.size <= 4 * 1024 * 1024 && longSide <= MAX_UPLOAD_SIDE) {
+      bitmap.close();
+      return file;
+    }
+    const scale = Math.min(1, MAX_UPLOAD_SIDE / longSide);
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.round(bitmap.width * scale);
+    canvas.height = Math.round(bitmap.height * scale);
+    canvas.getContext("2d").drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+    bitmap.close();
+    const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/jpeg", 0.92));
+    if (!blob || blob.size >= file.size) return file;
+    return new File([blob], file.name.replace(/\.[^.]+$/, "") + ".jpg", { type: "image/jpeg" });
+  } catch {
+    return file;
+  }
+}
+
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_RE = /^\d{10}$/;
 
@@ -163,11 +192,12 @@ function CustomPosterForm() {
     const run = ++enhanceRun.current;
     setEnhancing(true);
     const timer = setTimeout(
-      () => {
+      async () => {
         const fd = new FormData();
         fd.append("size", selectedSize.slug);
-        if (mode === "upload") fd.append("image", file);
+        if (mode === "upload") fd.append("image", await shrinkForUpload(file));
         else fd.append("imageLink", link);
+        if (run !== enhanceRun.current) return;
         enhanceCustomImage(fd)
           .then((data) => {
             if (run !== enhanceRun.current) return;
