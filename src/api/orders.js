@@ -1,4 +1,3 @@
-import axios from "axios";
 import apiClient from "./client.js";
 
 // The backend computes the subtotal (and any bulk-poster discount) itself
@@ -16,7 +15,7 @@ export async function placeOrder({ customer, items }) {
 // "Content-Type: application/json" header would stop the browser from
 // adding the multipart boundary the backend needs to parse an uploaded file.
 export async function submitCustomPosterOrder(formData) {
-  const { data } = await axios.post(`${apiClient.defaults.baseURL}/orders/custom`, formData);
+  const { data } = await apiClient.post("/orders/custom", formData);
   return data;
 }
 
@@ -24,8 +23,6 @@ export async function submitCustomPosterOrder(formData) {
 // chosen size and returns the hosted result for a live preview. Same bare
 // axios + FormData reasoning as above.
 export async function enhanceCustomImage(formData) {
-  const { data } = await axios.post(`${apiClient.defaults.baseURL}/orders/custom/enhance`, formData, {
-    timeout: 120000,
-  });
+  const { data } = await apiClient.post("/orders/custom/enhance", formData, { timeout: 120000 });
   return data;
 }

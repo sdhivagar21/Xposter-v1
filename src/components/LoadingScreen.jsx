@@ -13,7 +13,7 @@ export default function LoadingScreen({ fullScreen = false, className = "" }) {
       aria-label="Loading"
     >
       <img
-        src="/logo-mark.png"
+        src="/logo-mark.webp"
         alt="XPOSTERS"
         className="animate-logo-pulse h-9 w-auto sm:h-11"
       />

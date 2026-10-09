@@ -37,7 +37,7 @@ export default function Header() {
               <span className="h-px w-5 bg-[var(--xp-white)]" />
             </button>
             <Link to="/" aria-label="XPOSTERS" className="flex items-center">
-              <img src="/logo-mark.png" alt="XPOSTERS" className="h-7 w-auto sm:h-8" />
+              <img src="/logo-mark.webp" alt="XPOSTERS" width="90" height="32" className="h-7 w-auto sm:h-8" />
             </Link>
           </div>
 

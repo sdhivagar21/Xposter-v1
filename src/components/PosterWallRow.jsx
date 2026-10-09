@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import PosterImage from "./PosterImage.jsx";
 
 // Duplicates the product list so the marquee can loop seamlessly at -50%.
-export default function PosterWallRow({ products, direction = "left" }) {
+export default function PosterWallRow({ products, direction = "left", priority = false }) {
   const doubled = [...products, ...products];
   const animClass = direction === "left" ? "animate-marquee-left" : "animate-marquee-right";
 
@@ -15,7 +15,7 @@ export default function PosterWallRow({ products, direction = "left" }) {
             to={`/product/${product.id}`}
             className="group block w-32 shrink-0 sm:w-40"
           >
-            <PosterImage src={product.image} alt={product.name} width={320} />
+            <PosterImage src={product.image} alt={product.name} width={320} priority={priority && i < 4} />
           </Link>
         ))}
       </div>

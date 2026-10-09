@@ -2,10 +2,10 @@ import { Suspense, lazy, useEffect, useState } from "react";
 import { Routes, Route, Link } from "react-router-dom";
 import Header from "./components/Header.jsx";
 import Footer from "./components/Footer.jsx";
-import CartDrawer from "./components/CartDrawer.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
 import LoadingScreen from "./components/LoadingScreen.jsx";
 import Home from "./pages/Home.jsx";
+import { useCart } from "./context/CartContext.jsx";
 import ProtectedAdminRoute from "./components/admin/ProtectedAdminRoute.jsx";
 
 // Everything except the homepage loads on demand instead of shipping in the
@@ -14,6 +14,9 @@ import ProtectedAdminRoute from "./components/admin/ProtectedAdminRoute.jsx";
 // reason to make every visitor download and parse that code up front. Vite
 // splits each of these into its own small chunk, fetched only when the
 // matching route is actually visited.
+// The cart drawer isn't needed for the first paint, so it's split out and mounted
+// a moment after load (or immediately if opened sooner).
+const CartDrawer = lazy(() => import("./components/CartDrawer.jsx"));
 const Collections = lazy(() => import("./pages/Collections.jsx"));
 const CategoryPage = lazy(() => import("./pages/CategoryPage.jsx"));
 const SearchResults = lazy(() => import("./pages/SearchResults.jsx"));
@@ -104,6 +107,13 @@ function DeliveryPopup({ onClose }) {
 
 function CustomerShell({ children }) {
   const [showDeliveryPopup, setShowDeliveryPopup] = useState(false);
+  const { isDrawerOpen } = useCart();
+  const [drawerReady, setDrawerReady] = useState(false);
+
+  useEffect(() => {
+    const t = setTimeout(() => setDrawerReady(true), 2500);
+    return () => clearTimeout(t);
+  }, []);
 
   useEffect(() => {
     let alreadySeen = false;
@@ -131,7 +141,11 @@ function CustomerShell({ children }) {
     <div className="min-h-screen bg-[var(--xp-bg)] text-[var(--xp-white)]">
       <div className="film-grain" aria-hidden="true" />
       <Header />
-      <CartDrawer />
+      {(drawerReady || isDrawerOpen) && (
+        <Suspense fallback={null}>
+          <CartDrawer />
+        </Suspense>
+      )}
       <main>{children}</main>
       <Footer />
       {showDeliveryPopup && <DeliveryPopup onClose={() => setShowDeliveryPopup(false)} />}

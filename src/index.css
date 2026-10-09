@@ -25,15 +25,38 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Inter (variable), latin subset only. The bundled CSS from the package also
+   ships a ~85KB latin-ext file that gets fetched for a single "₹"; the system
+   font covers that glyph just fine. */
+@font-face {
+  font-family: "Inter Variable";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url("../node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2") format("woff2-variations");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* Metric-matched stand-in for Inter while it loads, so text doesn't reflow
+   (and push the page around) when the real font swaps in. */
+@font-face {
+  font-family: "Inter Fallback";
+  src: local("Arial");
+  size-adjust: 107.4%;
+  ascent-override: 90.2%;
+  descent-override: 22.5%;
+  line-gap-override: 0%;
+}
+
 body {
   background: var(--xp-bg);
   color: var(--xp-white);
-  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+  font-family: "Inter Variable", "Inter Fallback", ui-sans-serif, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
 .font-display {
-  font-family: "Anton", "Inter", sans-serif;
+  font-family: "Anton", "Inter Variable", sans-serif;
   letter-spacing: 0.01em;
 }
 
@@ -53,8 +76,7 @@ select:focus-visible {
   position: fixed;
   inset: 0;
   z-index: 60;
-  opacity: 0.05;
-  mix-blend-mode: overlay;
+  opacity: 0.03; /* no mix-blend-mode: a full-screen blend layer is costly to repaint */
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
