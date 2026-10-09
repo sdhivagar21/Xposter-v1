@@ -22,6 +22,14 @@ export default function Home() {
   const [rows, setRows] = useState(() => splitRows(snapshot.featured || []));
   const [loading, setLoading] = useState(!HAS_SNAPSHOT);
   const [error, setError] = useState(null);
+  // Only the first collection row is in the prerendered HTML; the rest mount a
+  // moment after load, so hydration (and first paint) stay light.
+  const [rowsShown, setRowsShown] = useState(1);
+
+  useEffect(() => {
+    const t = setTimeout(() => setRowsShown(Infinity), 1200);
+    return () => clearTimeout(t);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -78,7 +86,7 @@ export default function Home() {
             src="/logo-mark.webp"
             alt="XPOSTERS"
             className="animate-hero-rise mx-auto h-16 w-auto sm:h-24"
-            fetchpriority="high"
+            fetchPriority="high"
             width="320"
             height="114"
           />
@@ -124,7 +132,7 @@ export default function Home() {
       <section className="mx-auto max-w-6xl space-y-14 px-5 pb-20">
         {loading && <LoadingScreen className="min-h-[600px]" />}
         {!loading &&
-          categoriesWithProducts.map((cat) => (
+          categoriesWithProducts.slice(0, rowsShown).map((cat) => (
             <div key={cat.slug} style={{ contentVisibility: "auto", containIntrinsicSize: "auto 380px" }}>
               <div className="mb-4 flex items-baseline justify-between">
                 <h2 className="font-display text-2xl sm:text-3xl">{cat.name}</h2>
