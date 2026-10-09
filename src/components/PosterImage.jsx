@@ -10,7 +10,7 @@ import { optimizedImage } from "../utils/cloudinaryUrl.js";
 // `width` is the pixel width to actually request from Cloudinary (about 2x
 // the on-screen size covers retina screens). Keeps the site fast by never
 // shipping the full original upload for a small thumbnail.
-export default function PosterImage({ src, alt, className = "", aspect = "aspect-[2/3]", width = 480, priority = false, defer = false }) {
+export default function PosterImage({ src, alt, className = "", aspect = "aspect-[2/3]", width = 480, priority = false, defer = false, widths, sizes }) {
   const [broken, setBroken] = useState(false);
   // Priority (above-the-fold) posters skip the fade-in so they paint the moment
   // their bytes arrive instead of waiting on a state update + 0.4s transition.
@@ -44,6 +44,8 @@ export default function PosterImage({ src, alt, className = "", aspect = "aspect
       {!broken && src && ready && (
         <img
           src={optimizedImage(src, width)}
+          srcSet={widths ? widths.map((w) => `${optimizedImage(src, w)} ${w}w`).join(", ") : undefined}
+          sizes={widths ? sizes : undefined}
           alt={alt}
           loading={priority ? "eager" : "lazy"}
           fetchPriority={priority ? "high" : undefined}

@@ -24,8 +24,10 @@ function preloadCritical() {
           const snap = JSON.parse(readFileSync(new URL('./src/data/homeSnapshot.json', import.meta.url), 'utf8'))
           for (const p of (snap.featured || []).slice(0, 3)) {
             if (p.image && p.image.includes('/upload/')) {
-              const href = p.image.replace('/upload/', '/upload/f_auto,q_28,w_320/')
-              tags.push({ tag: 'link', attrs: { rel: 'preload', as: 'image', href, fetchpriority: 'high' }, injectTo: 'head' })
+              const at = (w) => p.image.replace('/upload/', `/upload/f_auto,q_28,w_${w}/`)
+              // Mirrors the wall's srcset/sizes (PosterWallRow.jsx) so the browser
+              // preloads the same file it will actually pick.
+              tags.push({ tag: 'link', attrs: { rel: 'preload', as: 'image', href: at(320), imagesrcset: [160, 240, 320].map((w) => at(w) + ' ' + w + 'w').join(', '), imagesizes: '(min-width: 640px) 160px, 128px', fetchpriority: 'high' }, injectTo: 'head' })
             }
           }
         } catch { /* no snapshot - skip */ }
