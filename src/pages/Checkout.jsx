@@ -5,6 +5,9 @@ import { placeOrder } from "../api/orders.js";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_RE = /^\d{10}$/;
+const FIELD_ORDER = ["name", "email", "phone", "address"];
+const INPUT_CLASS =
+  "w-full border border-[var(--xp-border-strong)] bg-transparent px-3 py-2.5 text-sm outline-none focus:border-[var(--xp-accent)]";
 
 export default function Checkout() {
   const {
@@ -31,15 +34,22 @@ export default function Checkout() {
   function validate() {
     const next = {};
     if (!form.name.trim()) next.name = "Enter your name.";
-    if (!EMAIL_RE.test(form.email.trim())) next.email = "Enter a valid email address.";
-    if (!PHONE_RE.test(form.phone.trim())) next.phone = "Enter a 10-digit phone number.";
+    if (!form.email.trim()) next.email = "Enter your email address.";
+    else if (!EMAIL_RE.test(form.email.trim())) next.email = "Invalid email — use a format like name@example.com.";
+    if (!form.phone.trim()) next.phone = "Enter your phone number.";
+    else if (!PHONE_RE.test(form.phone.trim())) next.phone = "Invalid phone number — it must be exactly 10 digits.";
     if (!form.address.trim()) next.address = "Enter a delivery address.";
     setErrors(next);
-    return Object.keys(next).length === 0;
+    // Jump to the first problem so it's never hidden below the fold on mobile.
+    const firstInvalid = FIELD_ORDER.find((field) => next[field]);
+    if (firstInvalid) document.getElementById(firstInvalid)?.focus();
+    return !firstInvalid;
   }
 
   function handleChange(field, value) {
     setForm((f) => ({ ...f, [field]: value }));
+    // Clear a field's error as soon as the customer starts fixing it.
+    if (errors[field]) setErrors((e) => ({ ...e, [field]: undefined }));
   }
 
   async function handlePlaceOrder(e) {
@@ -94,9 +104,11 @@ export default function Checkout() {
               type="text"
               value={form.name}
               onChange={(e) => handleChange("name", e.target.value)}
-              className="w-full border border-[var(--xp-border-strong)] bg-transparent px-3 py-2.5 text-sm outline-none focus:border-[var(--xp-accent)]"
+              aria-invalid={Boolean(errors.name)}
+              aria-describedby={errors.name ? "name-error" : undefined}
+              className={INPUT_CLASS}
             />
-            {errors.name && <p className="mt-1 text-xs text-white/70">{errors.name}</p>}
+            {errors.name && <p id="name-error" className="form-error">{errors.name}</p>}
           </div>
 
           <div>
@@ -108,9 +120,11 @@ export default function Checkout() {
               type="email"
               value={form.email}
               onChange={(e) => handleChange("email", e.target.value)}
-              className="w-full border border-[var(--xp-border-strong)] bg-transparent px-3 py-2.5 text-sm outline-none focus:border-[var(--xp-accent)]"
+              aria-invalid={Boolean(errors.email)}
+              aria-describedby={errors.email ? "email-error" : undefined}
+              className={INPUT_CLASS}
             />
-            {errors.email && <p className="mt-1 text-xs text-white/70">{errors.email}</p>}
+            {errors.email && <p id="email-error" className="form-error">{errors.email}</p>}
           </div>
 
           <div>
@@ -122,9 +136,11 @@ export default function Checkout() {
               type="tel"
               value={form.phone}
               onChange={(e) => handleChange("phone", e.target.value.replace(/[^\d]/g, "").slice(0, 10))}
-              className="w-full border border-[var(--xp-border-strong)] bg-transparent px-3 py-2.5 text-sm outline-none focus:border-[var(--xp-accent)]"
+              aria-invalid={Boolean(errors.phone)}
+              aria-describedby={errors.phone ? "phone-error" : undefined}
+              className={INPUT_CLASS}
             />
-            {errors.phone && <p className="mt-1 text-xs text-white/70">{errors.phone}</p>}
+            {errors.phone && <p id="phone-error" className="form-error">{errors.phone}</p>}
           </div>
 
           <div>
@@ -136,12 +152,14 @@ export default function Checkout() {
               rows={3}
               value={form.address}
               onChange={(e) => handleChange("address", e.target.value)}
-              className="w-full resize-none border border-[var(--xp-border-strong)] bg-transparent px-3 py-2.5 text-sm outline-none focus:border-[var(--xp-accent)]"
+              aria-invalid={Boolean(errors.address)}
+              aria-describedby={errors.address ? "address-error" : undefined}
+              className={`${INPUT_CLASS} resize-none`}
             />
-            {errors.address && <p className="mt-1 text-xs text-white/70">{errors.address}</p>}
+            {errors.address && <p id="address-error" className="form-error">{errors.address}</p>}
           </div>
 
-          {serverError && <p className="text-xs text-white/70">{serverError}</p>}
+          {serverError && <p role="alert" className="alert-error">{serverError}</p>}
 
           <button
             type="submit"

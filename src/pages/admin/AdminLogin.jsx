@@ -45,6 +45,7 @@ export default function AdminLogin() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            aria-invalid={Boolean(error)}
             className="w-full border border-[var(--xp-border-strong)] bg-transparent px-3 py-2.5 text-sm outline-none focus:border-[var(--xp-accent)]"
           />
         </div>
@@ -58,10 +59,11 @@ export default function AdminLogin() {
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            aria-invalid={Boolean(error)}
             className="w-full border border-[var(--xp-border-strong)] bg-transparent px-3 py-2.5 text-sm outline-none focus:border-[var(--xp-accent)]"
           />
         </div>
-        {error && <p className="text-xs text-white/70">{error}</p>}
+        {error && <p role="alert" className="alert-error">{error}</p>}
         <button
           type="submit"
           disabled={submitting}

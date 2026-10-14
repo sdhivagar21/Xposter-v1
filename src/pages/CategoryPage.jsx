@@ -92,7 +92,7 @@ export default function CategoryPage() {
         </div>
       </div>
 
-      {error && <p className="mt-10 text-sm text-white/60">{error}</p>}
+      {error && <p role="alert" className="alert-error mt-10">{error}</p>}
 
       {!error && !loading && products.length === 0 && (
         <div className="mt-16 text-center">
@@ -334,7 +334,7 @@ function CustomPosterForm() {
                 : " (already high quality)"}
             </p>
           )}
-          {enhanceError && !enhancing && <p className="mt-3 text-xs text-white/70">{enhanceError}</p>}
+          {enhanceError && !enhancing && <p role="alert" className="form-error mt-3">{enhanceError}</p>}
         </div>
 
         <form onSubmit={handleAddToCart} noValidate className="space-y-6">
@@ -384,7 +384,7 @@ function CustomPosterForm() {
                 className="mt-3 w-full border border-[var(--xp-border-strong)] bg-transparent px-3 py-2.5 text-sm outline-none focus:border-[var(--xp-accent)]"
               />
             )}
-            {errors.image && <p className="mt-1 text-xs text-white/70">{errors.image}</p>}
+            {errors.image && <p role="alert" className="form-error">{errors.image}</p>}
             <p className="mt-2 text-xs text-white/60">
               Any quality works - we automatically enhance your image to print-ready quality for the size you pick below.
             </p>

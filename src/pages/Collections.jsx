@@ -35,7 +35,7 @@ export default function Collections() {
       <p className="mt-3 max-w-md text-white/65">Pick a world and start filling your walls — or upload your own.</p>
 
       {loading && <LoadingScreen />}
-      {error && <p className="mt-10 text-sm text-white/60">{error}</p>}
+      {error && <p role="alert" className="alert-error mt-10">{error}</p>}
 
       {!loading && !error && (
         <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">

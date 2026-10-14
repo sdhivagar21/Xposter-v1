@@ -140,7 +140,7 @@ export default function ProductFormModal({ product, onClose, onSaved }) {
             Featured on homepage wall
           </label>
 
-          {error && <p className="text-xs text-white/70">{error}</p>}
+          {error && <p role="alert" className="alert-error">{error}</p>}
 
           <button
             type="submit"

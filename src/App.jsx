@@ -4,6 +4,7 @@ import Header from "./components/Header.jsx";
 import Footer from "./components/Footer.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
 import LoadingScreen from "./components/LoadingScreen.jsx";
+import WhatsAppButton from "./components/WhatsAppButton.jsx";
 import Home from "./pages/Home.jsx";
 import { useCart } from "./context/CartContext.jsx";
 import ProtectedAdminRoute from "./components/admin/ProtectedAdminRoute.jsx";
@@ -149,6 +150,7 @@ function CustomerShell({ children }) {
       <main>{children}</main>
       <Footer />
       {showDeliveryPopup && <DeliveryPopup onClose={() => setShowDeliveryPopup(false)} />}
+      <WhatsAppButton />
     </div>
   );
 }

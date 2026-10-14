@@ -54,7 +54,7 @@ export default function SearchResults() {
         {loading ? "Searching..." : `${total} ${total === 1 ? "poster" : "posters"} found`}
       </p>
 
-      {error && <p className="mt-10 text-sm text-white/60">{error}</p>}
+      {error && <p role="alert" className="alert-error mt-10">{error}</p>}
 
       {!error && loading && <LoadingScreen />}
 

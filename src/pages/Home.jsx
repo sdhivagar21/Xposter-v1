@@ -108,7 +108,9 @@ export default function Home() {
       </section>
 
       {error && (
-        <p className="mx-auto max-w-6xl px-5 pb-10 text-center text-sm text-white/60">{error}</p>
+        <div className="mx-auto max-w-6xl px-5 pb-10">
+          <p role="alert" className="alert-error text-center">{error}</p>
+        </div>
       )}
 
       {/* Auto-scrolling poster wall */}
