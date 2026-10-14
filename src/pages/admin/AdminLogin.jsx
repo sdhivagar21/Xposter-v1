@@ -22,8 +22,17 @@ export default function AdminLogin() {
     try {
       await login(email.trim(), password);
       navigate("/admin");
-    } catch {
-      setError("Invalid email or password.");
+    } catch (err) {
+      // Only a 401 means the details were wrong - don't blame the password
+      // when the backend is asleep, down, or erroring.
+      const status = err.response?.status;
+      if (status === 401) {
+        setError("Wrong email or password.");
+      } else if (!err.response) {
+        setError("Can't reach the server right now. Wait a minute and try again.");
+      } else {
+        setError(`The server couldn't sign you in (error ${status}). Try again in a minute.`);
+      }
     } finally {
       setSubmitting(false);
     }
@@ -39,9 +48,16 @@ export default function AdminLogin() {
           <label className="mb-1 block text-xs text-white/60" htmlFor="admin-email">
             Email
           </label>
+          {/* type="text", not "email": the browser's email check would block
+              signing in if ADMIN_EMAIL on the backend isn't a perfectly
+              formed address. The backend decides what's valid. */}
           <input
             id="admin-email"
-            type="email"
+            type="text"
+            inputMode="email"
+            autoComplete="username"
+            autoCapitalize="none"
+            spellCheck={false}
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -56,6 +72,7 @@ export default function AdminLogin() {
           <input
             id="admin-password"
             type="password"
+            autoComplete="current-password"
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -71,6 +88,11 @@ export default function AdminLogin() {
         >
           {submitting ? "Signing in…" : "Sign in"}
         </button>
+        {submitting && (
+          <p className="text-xs text-white/50">
+            If the site has been quiet for a while, the server can take up to a minute to wake up.
+          </p>
+        )}
       </form>
     </div>
   );

@@ -1,45 +1,9 @@
 import { useEffect, useState } from "react";
 import AdminLayout from "../../components/admin/AdminLayout.jsx";
+import SalesOverview from "../../components/admin/SalesOverview.jsx";
 import { fetchAdminOrders } from "../../api/admin.js";
 import LoadingScreen from "../../components/LoadingScreen.jsx";
 import PosterImage from "../../components/PosterImage.jsx";
-
-const rupees = new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 });
-
-// Cancelled orders never brought money in, so they're left out of every total.
-function summarizeSales(orders) {
-  const now = new Date();
-  const counted = orders.filter((o) => o.status !== "cancelled");
-  const thisMonth = counted.filter((o) => {
-    const placed = new Date(o.createdAt);
-    return placed.getFullYear() === now.getFullYear() && placed.getMonth() === now.getMonth();
-  });
-  const sum = (list) => list.reduce((total, o) => total + (Number(o.subtotal) || 0), 0);
-  return { total: sum(counted), count: counted.length, month: sum(thisMonth) };
-}
-
-function StatTile({ label, value }) {
-  return (
-    <div className="border border-[var(--xp-border)] bg-[var(--xp-bg-elevated)] p-5">
-      <p className="text-xs uppercase tracking-widest text-white/40">{label}</p>
-      <p className="mt-2 font-display text-3xl text-[var(--xp-accent-bright)]">{value}</p>
-    </div>
-  );
-}
-
-function SalesSummary({ orders }) {
-  const { total, count, month } = summarizeSales(orders);
-  return (
-    <section aria-label="Sales so far" className="mt-8">
-      <div className="grid gap-4 sm:grid-cols-3">
-        <StatTile label="Total sales so far" value={rupees.format(total)} />
-        <StatTile label="This month" value={rupees.format(month)} />
-        <StatTile label="Orders" value={count.toLocaleString("en-IN")} />
-      </div>
-      <p className="mt-2 text-xs text-white/40">Cancelled orders are not counted.</p>
-    </section>
-  );
-}
 
 export default function AdminOrders() {
   const [orders, setOrders] = useState([]);
@@ -57,14 +21,14 @@ export default function AdminOrders() {
     <AdminLayout>
       <h1 className="font-display text-3xl">Orders</h1>
 
+      <SalesOverview />
+
       {error && <p role="alert" className="alert-error mt-6">{error}</p>}
       {loading && <LoadingScreen />}
 
       {!loading && orders.length === 0 && (
         <p className="mt-10 text-sm text-white/60">No orders placed yet.</p>
       )}
-
-      {!loading && orders.length > 0 && <SalesSummary orders={orders} />}
 
       {!loading && orders.length > 0 && (
         <div className="mt-8 space-y-4">

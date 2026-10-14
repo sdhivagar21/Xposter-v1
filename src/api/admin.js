@@ -19,8 +19,10 @@ function authHeaders() {
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
+// The timeout turns a backend that never answers into a clear error instead
+// of an endless "Signing in…" - long enough for Render's free tier to wake.
 export async function adminLogin(email, password) {
-  const { data } = await apiClient.post("/admin/login", { email, password });
+  const { data } = await apiClient.post("/admin/login", { email, password }, { timeout: 90000 });
   return data; // { token, admin }
 }
 
@@ -73,5 +75,11 @@ export async function deleteAdminProduct(id) {
 
 export async function fetchAdminOrders() {
   const { data } = await apiClient.get("/admin/orders", { headers: authHeaders() });
+  return data;
+}
+
+// Returns { total, orders, month, monthOrders, milestones: { reached: [{ amount, reachedAt }], next } }
+export async function fetchAdminStats() {
+  const { data } = await apiClient.get("/admin/stats", { headers: authHeaders() });
   return data;
 }

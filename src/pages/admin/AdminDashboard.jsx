@@ -1,6 +1,7 @@
 ﻿import { useEffect, useState } from "react";
 import AdminLayout from "../../components/admin/AdminLayout.jsx";
 import ProductFormModal from "../../components/admin/ProductFormModal.jsx";
+import SalesOverview from "../../components/admin/SalesOverview.jsx";
 import { fetchAdminProducts, deleteAdminProduct } from "../../api/admin.js";
 import { CATEGORIES, getCategoryName } from "../../data/categories.js";
 import { optimizedImage } from "../../utils/cloudinaryUrl.js";
@@ -88,6 +89,8 @@ export default function AdminDashboard() {
           + Add poster
         </button>
       </div>
+
+      <SalesOverview />
 
       {/* Filter by category and search by name - with 1500+ products this is
           the fastest way to find the poster you want to edit or delete. */}
