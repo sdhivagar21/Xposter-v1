@@ -78,8 +78,16 @@ export async function fetchAdminOrders() {
   return data;
 }
 
-// Returns { total, orders, month, monthOrders, milestones: { reached: [{ amount, reachedAt }], next } }
+// Returns { total, orders, month, monthOrders, since, milestones: { reached: [{ amount, reachedAt }], next } }
+// since is when the total was last reset to zero, or null.
 export async function fetchAdminStats() {
   const { data } = await apiClient.get("/admin/stats", { headers: authHeaders() });
+  return data;
+}
+
+// Starts the total and milestones from zero as of now (orders are kept).
+// Returns the fresh stats, same shape as fetchAdminStats.
+export async function resetAdminStats() {
+  const { data } = await apiClient.post("/admin/stats/reset", null, { headers: authHeaders() });
   return data;
 }

@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { fetchAdminStats } from "../../api/admin.js";
+import { fetchAdminStats, resetAdminStats } from "../../api/admin.js";
 
 const rupees = new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 });
+const resetTime = new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeStyle: "short" });
 
 function StatTile({ label, value }) {
   return (
@@ -15,15 +16,34 @@ function StatTile({ label, value }) {
 // Total collected so far plus progress to the next sales milestone, at the
 // top of the admin pages. The backend does the maths (cancelled orders left
 // out, "this month" in Indian time) and emails the owner once per milestone.
+// "Reset to zero" starts the count again from now without touching orders.
 export default function SalesOverview() {
   const [stats, setStats] = useState(null);
   const [error, setError] = useState(false);
+  const [resetting, setResetting] = useState(false);
+  const [resetError, setResetError] = useState(null);
 
   useEffect(() => {
     fetchAdminStats()
       .then(setStats)
       .catch(() => setError(true));
   }, []);
+
+  async function handleReset() {
+    const ok = window.confirm(
+      "Reset the sales total to zero from now?\n\nNo orders are deleted, but only orders placed after this will count towards the total, this month, the order count and milestones."
+    );
+    if (!ok) return;
+    setResetting(true);
+    setResetError(null);
+    try {
+      setStats(await resetAdminStats());
+    } catch {
+      setResetError("Couldn't reset the total - try again.");
+    } finally {
+      setResetting(false);
+    }
+  }
 
   if (error) {
     return <p role="alert" className="alert-error mt-6">Couldn't load sales totals.</p>;
@@ -42,6 +62,25 @@ export default function SalesOverview() {
         <StatTile label="This month" value={stats ? rupees.format(stats.month) : placeholder} />
         <StatTile label="Orders" value={stats ? stats.orders.toLocaleString("en-IN") : placeholder} />
       </div>
+
+      {stats && (
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-white/50">
+          <p>{stats.since ? `Counting since ${resetTime.format(new Date(stats.since))}` : "Counting all orders"}</p>
+          <button
+            type="button"
+            onClick={handleReset}
+            disabled={resetting}
+            className="btn-outline px-3 py-1.5 text-xs disabled:opacity-50"
+          >
+            {resetting ? "Resetting…" : "Reset to zero"}
+          </button>
+        </div>
+      )}
+      {resetError && (
+        <p role="alert" className="alert-error mt-3">
+          {resetError}
+        </p>
+      )}
 
       {stats && (
         <div className="mt-4 border border-[var(--xp-border)] p-5">
