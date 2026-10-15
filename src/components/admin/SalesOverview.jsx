@@ -16,12 +16,14 @@ function StatTile({ label, value }) {
 // Total collected so far plus progress to the next sales milestone, at the
 // top of the admin pages. The backend does the maths (cancelled orders left
 // out, "this month" in Indian time) and emails the owner once per milestone.
-// "Reset to zero" starts the count again from now without touching orders.
-export default function SalesOverview() {
+// "Delete all orders" wipes the order history and starts everything from
+// zero; onReset lets the page showing the order list clear it too.
+export default function SalesOverview({ onReset }) {
   const [stats, setStats] = useState(null);
   const [error, setError] = useState(false);
   const [resetting, setResetting] = useState(false);
   const [resetError, setResetError] = useState(null);
+  const [deletedCount, setDeletedCount] = useState(null);
 
   useEffect(() => {
     fetchAdminStats()
@@ -30,16 +32,25 @@ export default function SalesOverview() {
   }, []);
 
   async function handleReset() {
-    const ok = window.confirm(
-      "Reset the sales total to zero from now?\n\nNo orders are deleted, but only orders placed after this will count towards the total, this month, the order count and milestones."
+    // Typing the word (not just clicking OK) because this can't be undone.
+    const typed = window.prompt(
+      "This permanently deletes ALL orders - including any not yet delivered - and starts the sales total from zero. It can't be undone.\n\nType DELETE to confirm."
     );
-    if (!ok) return;
+    if (typed === null) return;
+    if (typed.trim() !== "DELETE") {
+      setResetError("Nothing was deleted - type DELETE in capitals to confirm.");
+      return;
+    }
     setResetting(true);
     setResetError(null);
+    setDeletedCount(null);
     try {
-      setStats(await resetAdminStats());
+      const { deletedOrders, ...fresh } = await resetAdminStats();
+      setStats(fresh);
+      setDeletedCount(deletedOrders);
+      onReset?.();
     } catch {
-      setResetError("Couldn't reset the total - try again.");
+      setResetError("Couldn't delete the orders - try again.");
     } finally {
       setResetting(false);
     }
@@ -72,9 +83,14 @@ export default function SalesOverview() {
             disabled={resetting}
             className="btn-outline px-3 py-1.5 text-xs disabled:opacity-50"
           >
-            {resetting ? "Resetting…" : "Reset to zero"}
+            {resetting ? "Deleting…" : "Delete all orders"}
           </button>
         </div>
+      )}
+      {deletedCount !== null && (
+        <p role="status" className="mt-3 text-sm text-[var(--xp-accent-bright)]">
+          Deleted {deletedCount.toLocaleString("en-IN")} {deletedCount === 1 ? "order" : "orders"} - starting from zero.
+        </p>
       )}
       {resetError && (
         <p role="alert" className="alert-error mt-3">

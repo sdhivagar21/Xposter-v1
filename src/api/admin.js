@@ -85,9 +85,10 @@ export async function fetchAdminStats() {
   return data;
 }
 
-// Starts the total and milestones from zero as of now (orders are kept).
-// Returns the fresh stats, same shape as fetchAdminStats.
+// Permanently deletes every order and starts the total and milestones from
+// zero. Returns the fresh stats (same shape as fetchAdminStats) plus
+// deletedOrders, the number of orders removed.
 export async function resetAdminStats() {
-  const { data } = await apiClient.post("/admin/stats/reset", null, { headers: authHeaders() });
+  const { data } = await apiClient.post("/admin/stats/reset", { confirm: "DELETE" }, { headers: authHeaders() });
   return data;
 }

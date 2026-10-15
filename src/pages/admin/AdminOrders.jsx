@@ -21,7 +21,7 @@ export default function AdminOrders() {
     <AdminLayout>
       <h1 className="font-display text-3xl">Orders</h1>
 
-      <SalesOverview />
+      <SalesOverview onReset={() => setOrders([])} />
 
       {error && <p role="alert" className="alert-error mt-6">{error}</p>}
       {loading && <LoadingScreen />}
