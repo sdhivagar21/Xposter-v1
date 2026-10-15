@@ -47,6 +47,11 @@ export default function SalesOverview({ onReset }) {
     try {
       const { deletedOrders, ...fresh } = await resetAdminStats();
       setStats(fresh);
+      // An older backend only reset the totals and kept the orders.
+      if (typeof deletedOrders !== "number") {
+        setResetError("The server is still updating, so no orders were deleted - try again in a few minutes.");
+        return;
+      }
       setDeletedCount(deletedOrders);
       onReset?.();
     } catch {
