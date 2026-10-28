@@ -29,6 +29,7 @@ const NotFound = lazy(() => import("./pages/NotFound.jsx"));
 const AdminLogin = lazy(() => import("./pages/admin/AdminLogin.jsx"));
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard.jsx"));
 const AdminOrders = lazy(() => import("./pages/admin/AdminOrders.jsx"));
+const AdminPrintTool = lazy(() => import("./pages/admin/AdminOrders.jsx").then((m) => ({ default: m.AdminPrintTool })));
 
 // Session-wide "instant delivery" promo popup - a one-time attention-grab
 // nudging shoppers toward buying right now with a very specific, concrete
@@ -176,6 +177,14 @@ export default function App() {
             element={
               <ProtectedAdminRoute>
                 <AdminOrders />
+              </ProtectedAdminRoute>
+            }
+          />
+          <Route
+            path="/admin/print"
+            element={
+              <ProtectedAdminRoute>
+                <AdminPrintTool />
               </ProtectedAdminRoute>
             }
           />

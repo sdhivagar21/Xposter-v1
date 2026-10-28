@@ -1,10 +1,13 @@
 import { useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useAdminAuth } from "../../context/AdminAuthContext.jsx";
 
 export default function AdminLogin() {
   const { isLoggedIn, checking, login } = useAdminAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  // Back to the admin page they were trying to open, if any.
+  const from = typeof location.state?.from === "string" && location.state.from.startsWith("/admin") ? location.state.from : "/admin";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -12,7 +15,7 @@ export default function AdminLogin() {
   const [submitting, setSubmitting] = useState(false);
 
   if (!checking && isLoggedIn) {
-    return <Navigate to="/admin" replace />;
+    return <Navigate to={from} replace />;
   }
 
   async function handleSubmit(e) {
@@ -21,7 +24,7 @@ export default function AdminLogin() {
     setError(null);
     try {
       await login(email.trim(), password);
-      navigate("/admin");
+      navigate(from, { replace: true });
     } catch (err) {
       // Only a 401 means the details were wrong - don't blame the password
       // when the backend is asleep, down, or erroring.

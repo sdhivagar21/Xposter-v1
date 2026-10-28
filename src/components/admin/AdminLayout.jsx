@@ -24,6 +24,9 @@ export default function AdminLayout({ children }) {
               <NavLink to="/admin/orders" className={linkClass}>
                 Orders
               </NavLink>
+              <NavLink to="/admin/print" className={linkClass}>
+                Print files
+              </NavLink>
             </nav>
           </div>
           <div className="flex items-center gap-4 text-sm text-white/65">

@@ -145,6 +145,17 @@ async function shrinkForUpload(file) {
   }
 }
 
+// What people actually paste: a bare "pin.it/abc", or Pinterest's whole share
+// message ("Check this out! https://pin.it/abc"). Returns a clean https link.
+function cleanLink(raw) {
+  let s = String(raw || "").trim();
+  const inText = s.match(/https?:\/\/\S+/i);
+  if (inText) s = inText[0];
+  else if (/^(?:[\w-]+\.)+[a-z]{2,}(?:\/\S*)?$/i.test(s)) s = `https://${s}`;
+  return s.replace(/[)\].,'"]+$/, "");
+}
+const isPinterestLink = (link) => /^https?:\/\/(?:[\w-]+\.)*(?:pinterest\.[a-z.]+|pin\.it|pinimg\.com)\//i.test(link);
+
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_RE = /^\d{10}$/;
 
@@ -180,8 +191,8 @@ function CustomPosterForm() {
   const enhanceRun = useRef(0);
 
   useEffect(() => {
-    const link = imageLink.trim();
-    const hasSource = mode === "upload" ? !!file : /^https?:\/\/\S+$/i.test(link);
+    const link = cleanLink(imageLink);
+    const hasSource = mode === "upload" ? !!file : /^https?:\/\/\S+\.\S+$/i.test(link);
     setEnhanced(null);
     setEnhanceError(null);
     if (!hasSource) {
@@ -229,7 +240,6 @@ function CustomPosterForm() {
 
   function handleModeChange(next) {
     setMode(next);
-    setServerError(null);
     setPreviewLoaded(false);
     if (next === "upload") {
       setImageLink("");
@@ -242,7 +252,7 @@ function CustomPosterForm() {
   function validate() {
     const next = {};
     if (mode === "upload" && !file) next.image = "Choose an image to upload.";
-    if (mode === "link" && !imageLink.trim()) next.image = "Paste a link to your image.";
+    if (mode === "link" && !imageLink.trim()) next.image = "Paste a link to your image or Pinterest pin.";
     if (!next.image && enhancing) next.image = "Hold on - we're still enhancing your image.";
     if (!next.image && !enhanced) next.image = enhanceError || "We couldn't enhance that image - try another.";
     setErrors(next);
@@ -266,6 +276,9 @@ function CustomPosterForm() {
           width: enhanced.width,
           height: enhanced.height,
           notes: notes.trim().slice(0, 500),
+          // Kept only for small images the AI couldn't do right away, so
+          // the admin can make a sharper print file later.
+          ...(enhanced.sourceUrl ? { sourceImage: enhanced.sourceUrl } : {}),
         },
       },
       1,
@@ -284,7 +297,7 @@ function CustomPosterForm() {
     <div className="mx-auto max-w-4xl px-5 py-14">
       <h1 className="font-display text-4xl sm:text-5xl">Customizable Posters</h1>
       <p className="mt-3 max-w-lg text-white/65">
-        Upload your own image or paste a link to one, pick a size, and we'll print it — same rates as every other poster on XPOSTERS.
+        Upload your own image or paste a link to one (Pinterest pins work too), pick a size, and we'll print it — same rates as every other poster on XPOSTERS.
       </p>
 
       <div className="mt-10 grid gap-10 md:grid-cols-[1fr_1.2fr]">
@@ -304,9 +317,11 @@ function CustomPosterForm() {
                 className={`h-full w-full object-contain ${previewLoaded ? "loaded" : ""}`}
                 onLoad={() => setPreviewLoaded(true)}
               />
+            ) : mode === "link" && isPinterestLink(cleanLink(imageLink)) ? (
+              <span className="poster-fallback px-6 text-center">Getting the full-size image from Pinterest…</span>
             ) : mode === "link" && imageLink.trim() ? (
               <img
-                src={imageLink.trim()}
+                src={cleanLink(imageLink)}
                 alt="Your poster preview"
                 className={`h-full w-full object-contain ${previewLoaded ? "loaded" : ""}`}
                 onLoad={() => setPreviewLoaded(true)}
@@ -321,7 +336,7 @@ function CustomPosterForm() {
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black/70 text-center">
                 <span className="h-8 w-8 animate-spin rounded-full border-2 border-[var(--xp-accent)] border-t-transparent" />
                 <p className="px-6 text-sm text-[var(--xp-accent-bright)]">
-                  Enhancing to print quality for {selectedSize.label}…
+                  {mode === "link" && isPinterestLink(cleanLink(imageLink)) ? "Fetching from Pinterest and enhancing" : "Enhancing"} to print quality for {selectedSize.label}…
                 </p>
               </div>
             )}
@@ -330,7 +345,7 @@ function CustomPosterForm() {
             <p className="mt-3 border border-[var(--xp-accent-dim)] bg-[var(--xp-accent)]/10 px-3 py-2 text-xs text-[var(--xp-accent-bright)]">
               ✓ Print-ready {selectedSize.label} · {enhanced.width}×{enhanced.height}px at {enhanced.dpi} DPI
               {enhanced.upscaled
-                ? ` (enhanced from ${enhanced.originalWidth}×${enhanced.originalHeight}px)`
+                ? ` (${enhanced.ai ? "AI-enhanced" : "enhanced"} from ${enhanced.originalWidth}×${enhanced.originalHeight}px)`
                 : " (already high quality)"}
             </p>
           )}
@@ -360,7 +375,7 @@ function CustomPosterForm() {
                     : "border-[var(--xp-border-strong)] hover:border-[var(--xp-accent)]"
                 }`}
               >
-                Paste a link
+                Paste a link / Pinterest
               </button>
             </div>
 
@@ -374,8 +389,10 @@ function CustomPosterForm() {
               />
             ) : (
               <input
-                type="url"
-                placeholder="https://example.com/your-image.jpg"
+                type="text"
+                inputMode="url"
+                autoComplete="off"
+                placeholder="Image link or Pinterest pin (pin.it/…)"
                 value={imageLink}
                 onChange={(e) => {
                   setPreviewLoaded(false);
@@ -385,8 +402,13 @@ function CustomPosterForm() {
               />
             )}
             {errors.image && <p role="alert" className="form-error">{errors.image}</p>}
+            {mode === "link" && (
+              <p className="mt-2 text-xs text-white/60">
+                <span className="text-[var(--xp-accent-bright)]">Pinterest:</span> open the pin, tap Share → Copy link, and paste it here - we fetch the full-size original, not the small preview.
+              </p>
+            )}
             <p className="mt-2 text-xs text-white/60">
-              Any quality works - we automatically enhance your image to print-ready quality for the size you pick below.
+              Any quality works - even small or blurry images are AI-enhanced to sharp, print-ready quality for the size you pick below.
             </p>
           </div>
 
