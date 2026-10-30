@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { getCategoryName, SIZES } from "../data/categories.js";
 import { fetchAllProducts, getCachedAll } from "../api/products.js";
 import { enhanceCustomImage } from "../api/orders.js";
+import { fitForUpload } from "../api/client.js";
 import { useCart } from "../context/CartContext.jsx";
 import ProductCard from "../components/ProductCard.jsx";
 import { sortTamilMovies } from "../utils/tamilMoviesOrder.js";
@@ -205,7 +206,7 @@ function CustomPosterForm() {
       async () => {
         const fd = new FormData();
         fd.append("size", selectedSize.slug);
-        if (mode === "upload") fd.append("image", await shrinkForUpload(file));
+        if (mode === "upload") fd.append("image", await fitForUpload(await shrinkForUpload(file)));
         else fd.append("imageLink", link);
         if (run !== enhanceRun.current) return;
         enhanceCustomImage(fd)

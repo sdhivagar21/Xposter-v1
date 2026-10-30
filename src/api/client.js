@@ -12,6 +12,42 @@
 
 const baseURL = import.meta.env.VITE_API_BASE_URL || "http://localhost:4000/api";
 
+// The backend host accepts at most ~4.5 MB per request, so images are
+// re-encoded (and only if still needed, scaled down) to stay under 4 MB
+// before uploading. Small files pass through untouched.
+export const MAX_UPLOAD_BYTES = 4 * 1024 * 1024;
+export async function fitForUpload(file, maxBytes = MAX_UPLOAD_BYTES) {
+  if (!file || file.size <= maxBytes || !/^image\//.test(file.type || "")) return file;
+  let bitmap;
+  try {
+    bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
+  } catch {
+    return file;
+  }
+  const name = String(file.name || "image").replace(/\.[^.]+$/, "") + ".jpg";
+  let scale = Math.min(1, 6000 / Math.max(bitmap.width, bitmap.height));
+  let quality = 0.92;
+  try {
+    for (let attempt = 0; attempt < 10; attempt++) {
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+      canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+      const ctx = canvas.getContext("2d");
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.imageSmoothingQuality = "high";
+      ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+      const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/jpeg", quality));
+      if (blob && blob.size <= maxBytes) return new File([blob], name, { type: "image/jpeg" });
+      if (quality > 0.83) quality -= 0.04;
+      else scale *= 0.85;
+    }
+  } finally {
+    bitmap.close();
+  }
+  return file;
+}
+
 async function request(method, url, { body, params, headers, timeout } = {}) {
   let full = baseURL + url;
   if (params) {

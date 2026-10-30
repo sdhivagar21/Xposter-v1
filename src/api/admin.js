@@ -1,4 +1,4 @@
-import apiClient from "./client.js";
+import apiClient, { fitForUpload } from "./client.js";
 
 const TOKEN_KEY = "xposters_admin_token";
 
@@ -53,7 +53,7 @@ function buildProductFormData(fields, imageFile) {
 }
 
 export async function createAdminProduct(fields, imageFile) {
-  const formData = buildProductFormData(fields, imageFile);
+  const formData = buildProductFormData(fields, await fitForUpload(imageFile));
   const { data } = await apiClient.post("/admin/products", formData, {
     headers: { ...authHeaders(), "Content-Type": "multipart/form-data" },
   });
@@ -61,7 +61,7 @@ export async function createAdminProduct(fields, imageFile) {
 }
 
 export async function updateAdminProduct(id, fields, imageFile) {
-  const formData = buildProductFormData(fields, imageFile);
+  const formData = buildProductFormData(fields, await fitForUpload(imageFile));
   const { data } = await apiClient.put(`/admin/products/${id}`, formData, {
     headers: { ...authHeaders(), "Content-Type": "multipart/form-data" },
   });

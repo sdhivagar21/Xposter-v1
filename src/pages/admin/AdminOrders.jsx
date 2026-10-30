@@ -3,6 +3,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import AdminLayout from "../../components/admin/AdminLayout.jsx";
 import SalesOverview from "../../components/admin/SalesOverview.jsx";
 import { fetchAdminOrders, makePrintFile, fetchAiUsage, fetchPrintSource } from "../../api/admin.js";
+import { fitForUpload } from "../../api/client.js";
 import LoadingScreen from "../../components/LoadingScreen.jsx";
 import PosterImage from "../../components/PosterImage.jsx";
 
@@ -378,7 +379,10 @@ export function AdminPrintTool() {
     const fd = new FormData();
     fd.append("size", nextSize);
     fd.append("fit", fit);
-    if (image) fd.append("image", image, image.name || "image.jpg");
+    if (image) {
+      const fitted = await fitForUpload(image);
+      fd.append("image", fitted, fitted.name || "image.jpg");
+    }
     else fd.append("imageLink", link.trim());
     for (const [k, v] of Object.entries(extra)) fd.append(k, v);
     return makePrintFile(fd);
@@ -526,7 +530,7 @@ export function AdminPrintTool() {
                 }`}
               >
                 <span className="text-[var(--xp-accent-bright)]">{file ? file.name : "Drop an image here or click to choose"}</span>
-                <span className="text-xs text-white/50">{file ? `${formatMB(file.size)} · click to change` : "JPG, PNG or WEBP, up to 40 MB"}</span>
+                <span className="text-xs text-white/50">{file ? `${formatMB(file.size)} · click to change` : "JPG, PNG or WEBP - big files are resized to upload"}</span>
                 <input ref={inputRef} type="file" accept="image/*" className="sr-only" onChange={(e) => pick(e.target.files?.[0])} />
               </label>
             ) : (
