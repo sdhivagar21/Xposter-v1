@@ -8,7 +8,7 @@ import { writeFileSync, existsSync, mkdirSync } from "fs";
 import { fileURLToPath } from "url";
 import path from "path";
 
-const API = process.env.VITE_API_BASE_URL || "https://xposters-backend.onrender.com/api";
+const API = process.env.VITE_API_URL || "https://xposters-backend.vercel.app/api";
 const OUT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "data", "homeSnapshot.json");
 
 const slim = (p) => ({ id: p.id, name: p.name, category: p.category, image: p.image });

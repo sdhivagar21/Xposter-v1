@@ -1,7 +1,6 @@
 // Tiny fetch-based API client for the XPOSTERS backend (replaces axios, which
 // was ~14KB of JavaScript every visitor had to download just to make a few
-// JSON calls). Point VITE_API_BASE_URL (see .env) at your deployed backend,
-// e.g. https://xposters-backend.onrender.com/api
+// JSON calls). See LIVE_API below for where the live site's backend is.
 //
 // Same call shape the rest of the app already uses:
 //   apiClient.get(url, { params, headers }), .delete(url, config),
@@ -10,7 +9,13 @@
 // so existing `err.response?.data?.message` handling keeps working. A FormData
 // body is sent as-is so the browser adds the multipart boundary itself.
 
-const baseURL = import.meta.env.VITE_API_BASE_URL || "http://localhost:4000/api";
+// The live backend: the "xposters-backend" project on Vercel (moved from
+// Render on 30 Oct 2026). Production builds always use it unless VITE_API_URL
+// is set; local dev keeps using VITE_API_BASE_URL (see test-locally.bat).
+export const LIVE_API = "https://xposters-backend.vercel.app/api";
+const baseURL =
+  import.meta.env.VITE_API_URL ||
+  (import.meta.env.PROD ? LIVE_API : import.meta.env.VITE_API_BASE_URL || "http://localhost:4000/api");
 
 // The backend host accepts at most ~4.5 MB per request, so images are
 // re-encoded (and only if still needed, scaled down) to stay under 4 MB

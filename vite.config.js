@@ -47,12 +47,12 @@ function preloadCritical() {
 
 // https://vite.dev/config/
 // Local testing against the LIVE backend (test-locally.bat sets XP_LIVE_API):
-// the dev server forwards /api to Render, so any free port works and the
+// the dev server forwards /api to the live backend on Vercel, so any free port works and the
 // backend's CORS list never comes into play. Dev-only - builds ignore it.
 const liveApiProxy = process.env.XP_LIVE_API
   ? {
       '/api': {
-        target: 'https://xposters-backend.onrender.com',
+        target: 'https://xposters-backend.vercel.app',
         changeOrigin: true,
         secure: true,
         configure: (proxy) => proxy.on('proxyReq', (req) => req.removeHeader('origin')),
