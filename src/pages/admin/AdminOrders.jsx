@@ -37,7 +37,14 @@ export default function AdminOrders() {
           {orders.map((order) => (
             <div key={order.id} className="border border-[var(--xp-border)] p-5">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <p className="font-display text-lg tracking-wide">{order.orderId}</p>
+                <p className="flex items-center gap-2 font-display text-lg tracking-wide">
+                  {order.orderId}
+                  {order.deliveryOption === "instant" && (
+                    <span className="bg-[var(--xp-accent)] px-2 py-0.5 font-sans text-[10px] font-bold uppercase tracking-wider text-[#0c0b09]">
+                      ⚡ Instant · 59 min
+                    </span>
+                  )}
+                </p>
                 <div className="flex items-center gap-3">
                   <p className="text-xs text-white/60">{new Date(order.createdAt).toLocaleString()}</p>
                   {/* Print-ready files (300 DPI for the ordered size, enhanced
@@ -108,34 +115,51 @@ export default function AdminOrders() {
                       </li>
                     ))}
                   </ul>
-                  {(order.discountAmount > 0 || order.packDealAmount > 0) && (
-                    <>
-                      <div className="mt-2 flex justify-between border-t border-[var(--xp-border)] pt-2 text-sm text-white/60">
-                        <span>Items total</span>
-                        <span>₹{order.items.reduce((sum, item) => sum + item.qty * item.price, 0)}</span>
-                      </div>
-                      {order.discountAmount > 0 && (
-                        <div className="mt-1 flex justify-between text-sm text-[var(--xp-accent-bright)]">
-                          <span>Bundle discount ({order.discountPercent}%)</span>
-                          <span>-₹{order.discountAmount}</span>
+                  {(() => {
+                    const extras = order.discountAmount > 0 || order.packDealAmount > 0 || order.b2g1Amount > 0 || order.deliveryOption;
+                    return (
+                      <>
+                        {extras && (
+                          <div className="mt-2 flex justify-between border-t border-[var(--xp-border)] pt-2 text-sm text-white/60">
+                            <span>Items total</span>
+                            <span>₹{order.items.reduce((sum, item) => sum + item.qty * item.price, 0)}</span>
+                          </div>
+                        )}
+                        {order.b2g1Amount > 0 && (
+                          <div className="mt-1 flex justify-between text-sm text-[var(--xp-accent-bright)]">
+                            <span>Buy 2 Get 1</span>
+                            <span>-₹{order.b2g1Amount}</span>
+                          </div>
+                        )}
+                        {order.discountAmount > 0 && (
+                          <div className="mt-1 flex justify-between text-sm text-[var(--xp-accent-bright)]">
+                            <span>Bundle discount ({order.discountPercent}%)</span>
+                            <span>-₹{order.discountAmount}</span>
+                          </div>
+                        )}
+                        {order.packDealAmount > 0 && (
+                          <div className="mt-1 flex justify-between text-sm text-[var(--xp-accent-bright)]">
+                            <span>Pack deal (A4 / A5)</span>
+                            <span>-₹{order.packDealAmount}</span>
+                          </div>
+                        )}
+                        {order.deliveryOption && (
+                          <div className="mt-1 flex justify-between text-sm text-white/60">
+                            <span>{order.deliveryOption === "instant" ? "⚡ Instant delivery (59 min)" : "Free delivery · Tamil Nadu (3–5 days)"}</span>
+                            <span>{order.deliveryFee ? `₹${order.deliveryFee}` : "FREE"}</span>
+                          </div>
+                        )}
+                        <div
+                          className={`flex justify-between text-sm font-medium ${
+                            extras ? "mt-1" : "mt-2 border-t border-[var(--xp-border)] pt-2"
+                          }`}
+                        >
+                          <span>Total</span>
+                          <span>₹{order.subtotal}</span>
                         </div>
-                      )}
-                      {order.packDealAmount > 0 && (
-                        <div className="mt-1 flex justify-between text-sm text-[var(--xp-accent-bright)]">
-                          <span>Pack deal (A4 / A5)</span>
-                          <span>-₹{order.packDealAmount}</span>
-                        </div>
-                      )}
-                    </>
-                  )}
-                  <div
-                    className={`flex justify-between text-sm font-medium ${
-                      order.discountAmount > 0 || order.packDealAmount > 0 ? "mt-1" : "mt-2 border-t border-[var(--xp-border)] pt-2"
-                    }`}
-                  >
-                    <span>Total</span>
-                    <span>₹{order.subtotal}</span>
-                  </div>
+                      </>
+                    );
+                  })()}
                 </div>
               </div>
             </div>

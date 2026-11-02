@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext.jsx";
 import PosterImage from "./PosterImage.jsx";
+import DealMeter from "./DealMeter.jsx";
 
 export default function CartDrawer() {
   const {
@@ -13,10 +14,11 @@ export default function CartDrawer() {
     discountPercent,
     discountAmount,
     packDeals,
-    packDealAmount,
-    otherQty,
+    b2g1Amount,
+    b2g1FreeCount,
+    freeByKey,
+    saving,
     total,
-    itemsToNextDiscount,
     isDrawerOpen,
     setDrawerOpen,
   } = useCart();
@@ -60,51 +62,7 @@ export default function CartDrawer() {
           </div>
         ) : (
           <>
-            {/* Bundle-discount nudge - the whole point of showing this here
-                (rather than only at checkout) is to catch shoppers while
-                they can still act on it: add one more poster, right now,
-                and save 23%. */}
-            <div className="mx-5 mt-4 border border-[var(--xp-accent-dim)] bg-[var(--xp-accent)]/10 px-4 py-3">
-              {discountEligible ? (
-                <p className="text-xs font-medium text-[var(--xp-accent-bright)]">
-                  🎉 Bundle discount applied — {discountPercent}% off for buying 3+ posters!
-                </p>
-              ) : (
-                <>
-                  <p className="text-xs text-white/70">
-                    Add {itemsToNextDiscount} more A3 poster{itemsToNextDiscount === 1 ? "" : "s"} to save 23% on this
-                    order.
-                  </p>
-                  <div className="mt-2 h-1 w-full overflow-hidden bg-[var(--xp-border-strong)]">
-                    <div
-                      className="h-full bg-[var(--xp-accent)] transition-all duration-300"
-                      style={{ width: `${Math.min(100, (otherQty / 3) * 100)}%` }}
-                    />
-                  </div>
-                </>
-              )}
-            </div>
-            {packDeals.length > 0 && (
-              <div className="mx-5 mt-3 space-y-2 border border-[var(--xp-accent-dim)] bg-[var(--xp-accent)]/10 px-4 py-3">
-                {packDeals.map((deal) => (
-                  <div key={deal.size}>
-                    {deal.packs > 0 && (
-                      <p className="text-xs font-medium text-[var(--xp-accent-bright)]">
-                        🎉 {deal.label} deal applied — {deal.qty} {deal.label} posters for just ₹{deal.price}
-                        {deal.packs > 1 ? ` (×${deal.packs})` : ""}!
-                      </p>
-                    )}
-                    {deal.toNext > 0 && (
-                      <p className={`text-xs text-white/70 ${deal.packs > 0 ? "mt-1" : ""}`}>
-                        Add {deal.toNext} more {deal.label} poster{deal.toNext === 1 ? "" : "s"} to get {deal.qty}{" "}
-                        {deal.label} posters for just ₹{deal.price}.
-                      </p>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-
+            <DealMeter className="mx-5 mt-4" />
             <ul className="flex-1 space-y-5 overflow-y-auto px-5 py-5">
               {items.map((item) => (
                 <li key={item.key} className="flex gap-4">
@@ -138,7 +96,17 @@ export default function CartDrawer() {
                           +
                         </button>
                       </div>
-                      <span className="text-sm">₹{item.qty * item.price}</span>
+                      {freeByKey[item.key] ? (
+                        <span className="text-right text-sm">
+                          <span className="mr-1.5 bg-[var(--xp-accent)] px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#0c0b09]">
+                            {freeByKey[item.key] === item.qty ? "Free" : `${freeByKey[item.key]} free`}
+                          </span>
+                          <span className="text-white/45 line-through">₹{item.qty * item.price}</span>{" "}
+                          {freeByKey[item.key] < item.qty && <span>₹{(item.qty - freeByKey[item.key]) * item.price}</span>}
+                        </span>
+                      ) : (
+                        <span className="text-sm">₹{item.qty * item.price}</span>
+                      )}
                     </div>
                   </div>
                   <button
@@ -156,6 +124,14 @@ export default function CartDrawer() {
                 <span className="text-white/60">Subtotal</span>
                 <span>₹{subtotal}</span>
               </div>
+              {b2g1Amount > 0 && (
+                <div className="mt-1.5 flex items-center justify-between text-sm text-[var(--xp-accent-bright)]">
+                  <span>
+                    Buy 2 Get 1 ({b2g1FreeCount} free)
+                  </span>
+                  <span>-₹{b2g1Amount}</span>
+                </div>
+              )}
               {discountEligible && (
                 <div className="mt-1.5 flex items-center justify-between text-sm text-[var(--xp-accent-bright)]">
                   <span>Bundle discount ({discountPercent}%)</span>
@@ -175,9 +151,18 @@ export default function CartDrawer() {
                     <span>-₹{deal.amount}</span>
                   </div>
                 ))}
-              <div className="mb-4 mt-1.5 flex items-center justify-between">
+              <div className="mt-1.5 flex items-center justify-between text-sm">
+                <span className="text-white/60">Delivery</span>
+                <span className="text-right text-xs text-white/70">
+                  Free (3–5 days) or ⚡ 59 min · pick at checkout
+                </span>
+              </div>
+              <div className="mb-4 mt-2 flex items-center justify-between border-t border-[var(--xp-border)] pt-2">
                 <span className="text-sm text-white/60">Total</span>
-                <span className="text-lg font-medium">₹{total}</span>
+                <span className="text-right">
+                  {saving > 0 && <span className="mr-2 text-xs text-[var(--xp-accent-bright)]">You save ₹{saving}</span>}
+                  <span className="text-lg font-medium">₹{total}</span>
+                </span>
               </div>
               <Link
                 to="/checkout"

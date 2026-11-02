@@ -54,9 +54,57 @@ export function packSaving(deal) {
   return Math.max(0, deal.qty * unit - deal.price);
 }
 
-// items - cart items, each with `qty`, `price` and `size` (slug). Returns the
-// raw (pre-discount) subtotal plus everything the cart/checkout UI needs to
-// show the discounts and nudge shoppers toward them. A known size's price
+// Buy 2 Get 1: in every group of 3 posters the cheapest one is free. The
+// cart's posters are lined up from most to least expensive and every 3rd one
+// is free. The backend has its own copy and is what actually charges.
+export const BUY2GET1 = { groupSize: 3 };
+
+// Returns the saving, how many posters are free, and which cart lines they
+// are ({ [item.key]: freeUnits }) so the cart can tag them "FREE".
+export function computeBuy2Get1(items) {
+  const units = [];
+  items.forEach((item, index) => {
+    for (let n = 0; n < item.qty; n += 1) units.push({ key: item.key, price: item.price, index });
+  });
+  // Most expensive first; among equal prices the later-added poster is free.
+  units.sort((a, b) => b.price - a.price || a.index - b.index);
+  let amount = 0;
+  let freeCount = 0;
+  const freeByKey = {};
+  for (let i = BUY2GET1.groupSize - 1; i < units.length; i += BUY2GET1.groupSize) {
+    amount += units[i].price;
+    freeCount += 1;
+    freeByKey[units[i].key] = (freeByKey[units[i].key] || 0) + 1;
+  }
+  const rest = units.length % BUY2GET1.groupSize;
+  return { amount, freeCount, freeByKey, toNext: rest === 0 ? BUY2GET1.groupSize : BUY2GET1.groupSize - rest };
+}
+
+// Delivery: free across Tamil Nadu in 3-5 days, or instant - within 59 minutes
+// anywhere in Chennai - for a fee that depends on the posters' total after
+// discounts. Must stay in sync with the backend's src/data/categories.js,
+// which is what actually charges it.
+export const DELIVERY_OPTIONS = [
+  { slug: "standard", label: "Free delivery", eta: "3–5 days · all over Tamil Nadu" },
+  { slug: "instant", label: "Instant delivery", eta: "59 min · anywhere in Chennai" },
+];
+export const INSTANT_FREE_ABOVE = 300;
+
+export function instantDeliveryFee(itemsTotal) {
+  if (itemsTotal > INSTANT_FREE_ABOVE) return 0;
+  if (itemsTotal >= 200) return 100;
+  return 150;
+}
+
+export function deliveryFeeFor(option, itemsTotal) {
+  return option === "instant" ? instantDeliveryFee(itemsTotal) : 0;
+}
+
+// items - cart items, each with `qty`, `price` and `size` (slug). Works out
+// both kinds of deal - Buy 2 Get 1, and the pack deals + bundle discount
+// together - and applies whichever saves the customer more (never both),
+// exactly like the backend does. Also returns everything the cart/checkout
+// UI needs to nudge shoppers toward the next deal. A known size's price
 // always comes from SIZES, so a cart saved before a price change still adds up.
 export function computeCartTotals(rawItems) {
   const items = rawItems.map((item) => {
@@ -88,19 +136,32 @@ export function computeCartTotals(rawItems) {
   const others = items.filter((i) => !dealSizes.includes(i.size));
   const otherQty = others.reduce((sum, i) => sum + i.qty, 0);
   const otherSubtotal = others.reduce((sum, i) => sum + i.qty * i.price, 0);
-  const discountEligible = otherQty >= BULK_DISCOUNT.minQty;
-  const discountAmount = discountEligible ? Math.round(otherSubtotal * (BULK_DISCOUNT.percent / 100)) : 0;
+  const bulkEligible = otherQty >= BULK_DISCOUNT.minQty;
+  const bulkAmount = bulkEligible ? Math.round(otherSubtotal * (BULK_DISCOUNT.percent / 100)) : 0;
+  const comboAmount = bulkAmount + packDealAmount;
+
+  const b2g1 = computeBuy2Get1(items);
+  const useB2g1 = b2g1.amount > comboAmount;
+  const dealType = useB2g1 ? "b2g1" : comboAmount > 0 ? "combo" : "";
+  const saving = useB2g1 ? b2g1.amount : comboAmount;
 
   return {
     totalQty,
     subtotal,
-    discountEligible,
-    discountPercent: discountEligible ? BULK_DISCOUNT.percent : 0,
-    discountAmount,
-    packDeals,
-    packDealAmount,
+    dealType,
+    saving,
+    // Only the deal that won is filled in; the other's amounts are 0.
+    discountEligible: !useB2g1 && bulkEligible,
+    discountPercent: !useB2g1 && bulkEligible ? BULK_DISCOUNT.percent : 0,
+    discountAmount: useB2g1 ? 0 : bulkAmount,
+    packDeals: packDeals.map((d) => (useB2g1 ? { ...d, amount: 0 } : d)),
+    packDealAmount: useB2g1 ? 0 : packDealAmount,
+    b2g1Amount: useB2g1 ? b2g1.amount : 0,
+    b2g1FreeCount: useB2g1 ? b2g1.freeCount : 0,
+    freeByKey: useB2g1 ? b2g1.freeByKey : {},
+    b2g1ToNext: b2g1.toNext,
     otherQty,
-    total: subtotal - discountAmount - packDealAmount,
+    total: subtotal - saving,
     itemsToNextDiscount: Math.max(0, BULK_DISCOUNT.minQty - otherQty),
   };
 }

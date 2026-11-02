@@ -7,6 +7,7 @@ import LoadingScreen from "./components/LoadingScreen.jsx";
 import WhatsAppButton from "./components/WhatsAppButton.jsx";
 import Home from "./pages/Home.jsx";
 import { useCart } from "./context/CartContext.jsx";
+import DealCelebration from "./components/DealCelebration.jsx";
 import ProtectedAdminRoute from "./components/admin/ProtectedAdminRoute.jsx";
 
 // Everything except the homepage loads on demand instead of shipping in the
@@ -33,7 +34,7 @@ const AdminPrintTool = lazy(() => import("./pages/admin/AdminOrders.jsx").then((
 
 // Session-wide "instant delivery" promo popup - a one-time attention-grab
 // nudging shoppers toward buying right now with a very specific, concrete
-// hook (55 minutes, Chennai only). Shown once per browser tab (sessionStorage
+// hook (59 minutes, Chennai only). Shown once per browser tab (sessionStorage
 // flag) with a short delay so it doesn't fight the page's own first paint.
 function DeliveryPopup({ onClose }) {
   return (
@@ -73,7 +74,7 @@ function DeliveryPopup({ onClose }) {
 
         <div className="relative mt-5 flex items-end gap-3">
           <span className="font-display text-6xl leading-none text-[var(--xp-accent-bright)] sm:text-7xl">
-            55
+            59
           </span>
           <span className="pb-1.5 font-display text-xl leading-none text-white/80 sm:text-2xl">MIN</span>
         </div>
@@ -82,16 +83,30 @@ function DeliveryPopup({ onClose }) {
           ⚡ Instant Delivery, Right to Your Door
         </h2>
         <p className="relative mt-3 text-sm text-white/60">
-          Order any poster now and get it delivered across Chennai in just 55 minutes — fresh off the
+          Order any poster now and get it delivered anywhere in Chennai in just 59 minutes — fresh off the
           press, no waiting around.
         </p>
+        <div className="relative mt-4 grid grid-cols-3 border border-[var(--xp-border-strong)] text-center text-[11px] text-white/60">
+          <div className="px-2 py-2">
+            <p className="font-semibold text-[var(--xp-white)]">₹150</p>
+            under ₹200
+          </div>
+          <div className="border-x border-[var(--xp-border-strong)] px-2 py-2">
+            <p className="font-semibold text-[var(--xp-white)]">₹100</p>
+            ₹200–₹300
+          </div>
+          <div className="bg-[var(--xp-accent)]/10 px-2 py-2">
+            <p className="font-semibold text-[var(--xp-accent-bright)]">FREE</p>
+            above ₹300
+          </div>
+        </div>
 
         <Link
           to="/collections"
           onClick={onClose}
           className="btn-primary relative mt-6 block w-full py-3.5 text-center text-sm font-medium"
         >
-          Order Now — Get It in 55 Min
+          Order Now — Get It in 59 Min
         </Link>
         <button
           onClick={onClose}
@@ -100,7 +115,7 @@ function DeliveryPopup({ onClose }) {
           Maybe later
         </button>
         <p className="relative mt-4 text-center text-[11px] text-white/55">
-          Available for Chennai addresses. Standard delivery elsewhere.
+          Instant delivery is for Chennai addresses. Free delivery everywhere else in Tamil Nadu (3–5 days).
         </p>
       </div>
     </div>
@@ -152,6 +167,7 @@ function CustomerShell({ children }) {
       <Footer />
       {showDeliveryPopup && <DeliveryPopup onClose={() => setShowDeliveryPopup(false)} />}
       <WhatsAppButton />
+      <DealCelebration />
     </div>
   );
 }

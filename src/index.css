@@ -362,3 +362,195 @@ select[aria-invalid="true"] {
     transform: none;
   }
 }
+
+/* ---------- Deals: Buy 2 Get 1 ads + the "deal unlocked" celebration ---------- */
+
+/* Gold ticker across the top of every page */
+.promo-ticker {
+  display: flex;
+  width: max-content;
+  animation: marquee-left 32s linear infinite;
+}
+.promo-ticker-wrap:hover .promo-ticker {
+  animation-play-state: paused;
+}
+
+/* A light sweep across gold deal surfaces */
+@keyframes deal-shine {
+  0% {
+    transform: translateX(-120%) skewX(-20deg);
+  }
+  60%,
+  100% {
+    transform: translateX(320%) skewX(-20deg);
+  }
+}
+/* Needs a positioned element - add Tailwind's `relative` (or absolute). */
+.deal-shine {
+  overflow: hidden;
+}
+.deal-shine::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 35%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  animation: deal-shine 3.2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* "Deal unlocked" banner */
+@keyframes deal-banner-pop {
+  0% {
+    opacity: 0;
+    transform: translateY(-24px) scale(0.8);
+  }
+  12% {
+    opacity: 1;
+    transform: translateY(0) scale(1.06);
+  }
+  18% {
+    transform: scale(1);
+  }
+  86% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-14px) scale(0.96);
+  }
+}
+.deal-banner-pop {
+  animation: deal-banner-pop 3.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.deal-banner-shine {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 40%;
+  background: linear-gradient(90deg, transparent, rgba(226, 189, 108, 0.35), transparent);
+  animation: deal-shine 1.6s ease-in-out 0.3s 2;
+}
+
+/* The deal helicopter: spinning rotors, blinking eyes, a quick squash when
+   it turns around, and a notched flag-style banner. */
+@keyframes heli-rotor {
+  0%,
+  100% {
+    transform: scaleX(1);
+  }
+  50% {
+    transform: scaleX(0.12);
+  }
+}
+@keyframes heli-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes heli-blink {
+  0%,
+  42%,
+  50%,
+  100% {
+    transform: scaleY(1);
+  }
+  46% {
+    transform: scaleY(0.1);
+  }
+}
+.heli-rotor {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: heli-rotor 0.13s linear infinite;
+}
+.heli-tail-rotor {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: heli-spin 0.12s linear infinite;
+}
+.heli-eyes {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: heli-blink 1.8s ease-in-out infinite;
+}
+@keyframes heli-light {
+  0%,
+  60%,
+  100% {
+    opacity: 0.25;
+  }
+  70%,
+  90% {
+    opacity: 1;
+  }
+}
+.heli-light {
+  animation: heli-light 0.9s linear infinite;
+}
+.heli-light-2 {
+  animation-delay: 0.45s;
+}
+.heli-face {
+  transition: transform 0.32s cubic-bezier(0.3, 1.5, 0.5, 1);
+}
+.heli-banner {
+  clip-path: polygon(0 0, 100% 0, 93% 50%, 100% 100%, 0 100%, 7% 50%);
+}
+
+/* Cart deal card: a quick pulse when a deal unlocks */
+@keyframes deal-card-pop {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(201, 162, 76, 0);
+  }
+  30% {
+    transform: scale(1.03);
+    box-shadow: 0 0 28px rgba(201, 162, 76, 0.55);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(201, 162, 76, 0);
+  }
+}
+.deal-card-pop {
+  animation: deal-card-pop 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* "FREE" stamp wobble on the home promo */
+@keyframes stamp-in {
+  0% {
+    opacity: 0;
+    transform: rotate(-18deg) scale(2.2);
+  }
+  60% {
+    opacity: 1;
+    transform: rotate(-12deg) scale(0.92);
+  }
+  100% {
+    opacity: 1;
+    transform: rotate(-12deg) scale(1);
+  }
+}
+.stamp-in {
+  animation: stamp-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
+}
+
+/* On the product page the sticky "Add to cart" bar sits at the bottom of
+   the screen on phones - lift the WhatsApp button above it. */
+.whatsapp-fab {
+  bottom: calc(max(1rem, env(safe-area-inset-bottom)) + var(--fab-lift, 0px));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .promo-ticker,
+  .deal-shine::after,
+  .deal-banner-shine,
+  .deal-card-pop,
+  .stamp-in {
+    animation: none !important;
+  }
+  .deal-banner-pop {
+    animation-duration: 2.6s;
+  }
+}

@@ -1,11 +1,11 @@
 import apiClient from "./client.js";
 
-// The backend computes the subtotal (and any bulk-poster discount) itself
-// from `items` rather than trusting a number from here - see
-// orderController.js's createOrder - so there's nothing to send but the
-// order's own contents.
-export async function placeOrder({ customer, items }) {
-  const { data } = await apiClient.post("/orders", { customer, items });
+// The backend computes the total (the deal, and the fee for the chosen
+// delivery option) itself from `items` rather than trusting a number from
+// here - see orderController.js's createOrder - so there's nothing to send
+// but the order's own contents and the delivery choice.
+export async function placeOrder({ customer, items, deliveryOption = "standard" }) {
+  const { data } = await apiClient.post("/orders", { customer, items, deliveryOption });
   return data;
 }
 

@@ -5,6 +5,15 @@ import { useWishlist } from "../context/WishlistContext.jsx";
 import HamburgerDrawer from "./HamburgerDrawer.jsx";
 import SearchOverlay from "./SearchOverlay.jsx";
 
+const TICKER = [
+  { text: "Buy 2 Get 1 FREE", hot: true },
+  { text: "The cheapest of every 3 posters is on us" },
+  { text: "⚡ 59-min delivery anywhere in Chennai", hot: true },
+  { text: "Free delivery all over Tamil Nadu" },
+  { text: "5 A4 for ₹375 · 5 A5 for ₹225" },
+  { text: "Best deal applied automatically" },
+];
+
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -13,15 +22,31 @@ export default function Header() {
 
   return (
     <>
-      {/* Sitewide bundle-discount ad - the main "come buy more posters" nudge,
-          seen on every page before anyone's even opened the cart. Scrolls
-          away with the page rather than staying sticky, so it doesn't eat
-          into the header's own sticky space. */}
+      {/* Sitewide deals ad - the main "come buy more posters" nudge, seen on
+          every page before anyone's even opened the cart. A slow gold ticker
+          led by Buy 2 Get 1. Scrolls away with the page rather than staying
+          sticky, so it doesn't eat into the header's own sticky space. */}
       <Link
         to="/collections"
-        className="block bg-[var(--xp-accent)] px-4 py-2 text-center text-xs font-medium text-[#0c0b09] transition-colors hover:bg-[var(--xp-accent-bright)] sm:text-sm"
+        aria-label="Buy 2 Get 1 free on every poster - shop now"
+        className="promo-ticker-wrap relative block overflow-hidden bg-[var(--xp-accent)] text-[#0c0b09]"
       >
-        Buy 3 A3 posters, save 23% · 5 A4 for ₹375 · 5 A5 for ₹225 — applied automatically
+        <div className="promo-ticker" aria-hidden="true">
+          {[0, 1].map((copy) => (
+            <div key={copy} className="flex shrink-0 items-center">
+              {TICKER.map((msg) => (
+                <span key={msg.text} className="flex items-center gap-2 whitespace-nowrap px-5 py-2 text-[11px] font-bold uppercase tracking-[0.14em] sm:text-xs">
+                  {msg.hot ? (
+                    <span className="bg-[#0c0b09] px-2 py-0.5 text-[var(--xp-accent-bright)]">{msg.text}</span>
+                  ) : (
+                    msg.text
+                  )}
+                  <span className="pl-5 opacity-50">✦</span>
+                </span>
+              ))}
+            </div>
+          ))}
+        </div>
       </Link>
 
       <header className="sticky top-0 z-30 border-b border-[var(--xp-border)] bg-[var(--xp-bg)]/90 backdrop-blur">

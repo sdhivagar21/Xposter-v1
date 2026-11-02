@@ -5,6 +5,7 @@ import { fetchHomeSections, fetchFeaturedProducts } from "../api/products.js";
 import PosterWallRow from "../components/PosterWallRow.jsx";
 import CategoryChip from "../components/CategoryChip.jsx";
 import ProductCard from "../components/ProductCard.jsx";
+import PosterImage from "../components/PosterImage.jsx";
 import LoadingScreen from "../components/LoadingScreen.jsx";
 import { sortTamilMovies } from "../utils/tamilMoviesOrder.js";
 import snapshot from "../data/homeSnapshot.json";
@@ -65,6 +66,8 @@ export default function Home() {
     };
   }, []);
 
+  const promoPosters = [...rows.rowA, ...rows.rowB].filter((p) => p.image).slice(0, 3);
+
   const categoriesWithProducts = CATEGORIES.map((cat) => {
     const products = sections[cat.slug] || [];
     return {
@@ -119,6 +122,49 @@ export default function Home() {
       <section className="min-h-[432px] space-y-4 py-4 sm:min-h-[528px]">
         {rows.rowA.length > 0 && <PosterWallRow products={rows.rowA} direction="left" priority />}
         {rows.rowB.length > 0 && <PosterWallRow products={rows.rowB} direction="right" />}
+      </section>
+
+      {/* Buy 2 Get 1 promo */}
+      <section className="mx-auto max-w-6xl px-5 pt-8">
+        <Link
+          to="/collections"
+          className="group relative grid items-center gap-6 overflow-hidden border border-[var(--xp-accent)] bg-[linear-gradient(120deg,rgba(201,162,76,0.22),rgba(12,11,9,0.2)_55%,rgba(201,162,76,0.12))] px-6 py-7 sm:grid-cols-[1.1fr_1fr] sm:px-10 sm:py-9"
+        >
+          <div
+            className="animate-glow-pulse pointer-events-none absolute -left-20 -top-24 h-64 w-64 rounded-full bg-[var(--xp-accent)]/25 blur-[90px]"
+            aria-hidden="true"
+          />
+          <div className="relative">
+            <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-[var(--xp-accent-bright)]">On every poster · every size</p>
+            <h2 className="mt-2 font-display text-5xl leading-[0.92] sm:text-6xl lg:text-7xl">
+              Buy 2<br />
+              Get 1 <span className="text-[var(--xp-accent-bright)]">Free</span>
+            </h2>
+            <p className="mt-3 max-w-sm text-sm text-white/65">
+              Put any 3 posters in your cart and the cheapest one is on us. Mix sizes, mix movies — it applies automatically.
+            </p>
+            <span className="btn-primary deal-shine relative mt-5 inline-block px-6 py-3 text-sm font-semibold">Grab the deal →</span>
+          </div>
+          <div className="relative mx-auto flex h-44 w-60 items-end justify-center sm:h-60 sm:w-96" aria-hidden="true">
+            {promoPosters.map((p, i) => (
+              <div
+                key={p.id}
+                className="absolute bottom-0 w-20 transition-transform duration-500 group-hover:-translate-y-1 sm:w-32"
+                style={{
+                  transform: `translateX(calc(${(i - 1) * 100}% - ${(i - 1) * 8}px)) rotate(${(i - 1) * 8}deg) translateY(${i === 1 ? -16 : 0}px)`,
+                  zIndex: i === 2 ? 3 : i === 1 ? 2 : 1,
+                }}
+              >
+                <PosterImage src={p.image} alt="" width={240} className="shadow-[0_14px_30px_rgba(0,0,0,0.7)]" />
+                {i === 2 && (
+                  <span className="stamp-in absolute -right-3 -top-3 grid h-14 w-14 place-items-center rounded-full border-2 border-[#0c0b09] bg-[var(--xp-accent-bright)] font-display text-lg text-[#0c0b09] shadow-[0_6px_16px_rgba(0,0,0,0.6)]">
+                    FREE
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+        </Link>
       </section>
 
       {/* Quick category chips */}

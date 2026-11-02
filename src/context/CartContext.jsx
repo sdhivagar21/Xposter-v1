@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, useMemo } from "react";
+import { createContext, useContext, useEffect, useRef, useState, useMemo } from "react";
 import { SIZES, computeCartTotals } from "../data/categories.js";
 
 const CartContext = createContext(null);
@@ -67,12 +67,28 @@ export function CartProvider({ children }) {
     setItems([]);
   }
 
-  // Also carries the bulk-poster discount (buy 3+, save 23%) - see
-  // computeCartTotals in data/categories.js. The backend recomputes this
+  // Also carries the deals (Buy 2 Get 1, or pack deals + the 3+ bundle
+  // discount, whichever saves more) - see computeCartTotals in
+  // data/categories.js. The backend recomputes this
   // itself when the order is actually placed (never trusts these numbers
   // from the frontend), so this is purely a live preview for the cart and
   // checkout UI.
   const totals = useMemo(() => computeCartTotals(items), [items]);
+
+  // A deal just kicked in (or a bigger one) - DealCelebration plays the
+  // supercar + confetti show for it. Compared against the previous cart, so
+  // a cart restored from storage on page load never triggers it, and
+  // removing posters never does either.
+  const [celebration, setCelebration] = useState(null);
+  const prevDeal = useRef({ saving: totals.saving, unlocks: dealUnlocks(totals), dealType: totals.dealType });
+  useEffect(() => {
+    const prev = prevDeal.current;
+    const unlocks = dealUnlocks(totals);
+    if (totals.saving > prev.saving && (unlocks > prev.unlocks || totals.dealType !== prev.dealType)) {
+      setCelebration({ id: Date.now(), dealType: totals.dealType, saving: totals.saving, freeCount: totals.b2g1FreeCount });
+    }
+    prevDeal.current = { saving: totals.saving, unlocks, dealType: totals.dealType };
+  }, [totals]);
 
   const value = {
     items,
@@ -87,6 +103,14 @@ export function CartProvider({ children }) {
     discountAmount: totals.discountAmount,
     packDeals: totals.packDeals,
     packDealAmount: totals.packDealAmount,
+    dealType: totals.dealType,
+    saving: totals.saving,
+    b2g1Amount: totals.b2g1Amount,
+    b2g1FreeCount: totals.b2g1FreeCount,
+    b2g1ToNext: totals.b2g1ToNext,
+    freeByKey: totals.freeByKey,
+    celebration,
+    clearCelebration: () => setCelebration(null),
     otherQty: totals.otherQty,
     total: totals.total,
     itemsToNextDiscount: totals.itemsToNextDiscount,
@@ -95,6 +119,13 @@ export function CartProvider({ children }) {
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
+}
+
+// How many separate deal "steps" the cart has reached - free posters for Buy
+// 2 Get 1, otherwise full packs plus the bundle discount.
+function dealUnlocks(t) {
+  if (t.dealType === "b2g1") return t.b2g1FreeCount;
+  return t.packDeals.reduce((sum, d) => sum + d.packs, 0) + (t.discountEligible ? 1 : 0);
 }
 
 export function useCart() {
