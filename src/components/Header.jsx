@@ -91,7 +91,7 @@ export default function Header() {
               )}
             </Link>
 
-            <button onClick={() => setDrawerOpen(true)} aria-label="Cart" className="relative grid h-9 w-9 place-items-center">
+            <button onClick={() => setDrawerOpen(true)} aria-label="Cart" data-cart-icon className="relative grid h-9 w-9 place-items-center">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
                 <path d="M6 8h12l-1 12H7L6 8Z" />
                 <path d="M9 8V6a3 3 0 0 1 6 0v2" />

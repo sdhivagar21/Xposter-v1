@@ -9,6 +9,7 @@ import ProductCard from "../components/ProductCard.jsx";
 import StarRating from "../components/StarRating.jsx";
 import LoadingScreen from "../components/LoadingScreen.jsx";
 import DealMeter from "../components/DealMeter.jsx";
+import { flyToCart } from "../components/DealCelebration.jsx";
 
 const INPUT_CLASS =
   "w-full border border-[var(--xp-border-strong)] bg-transparent px-3 py-2.5 text-sm outline-none focus:border-[var(--xp-accent)]";
@@ -123,8 +124,9 @@ export default function ProductDetail() {
   const wishlisted = isWishlisted(product.id);
   const reviewCount = product.reviews.length;
 
-  function handleAddToCart() {
-    addToCart(product, 1, selectedSize);
+  function handleAddToCart(e) {
+    const size = selectedSize;
+    flyToCart({ from: e?.currentTarget, image: product.image, onArrive: () => addToCart(product, 1, size) });
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   }

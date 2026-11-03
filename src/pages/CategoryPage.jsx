@@ -6,6 +6,7 @@ import { enhanceCustomImage } from "../api/orders.js";
 import { fitForUpload } from "../api/client.js";
 import { useCart } from "../context/CartContext.jsx";
 import ProductCard from "../components/ProductCard.jsx";
+import { flyToCart } from "../components/DealCelebration.jsx";
 import { sortTamilMovies } from "../utils/tamilMoviesOrder.js";
 
 const SORT_OPTIONS = [
@@ -266,7 +267,8 @@ function CustomPosterForm() {
   function handleAddToCart(e) {
     e.preventDefault();
     if (!validate()) return;
-    addToCart(
+    const add = (item, size) => flyToCart({ from: e.nativeEvent?.submitter, image: item.image, onArrive: () => addToCart(item, 1, size) });
+    add(
       {
         id: enhanced.publicId,
         name: `Custom Poster (${selectedSize.label})`,
@@ -282,7 +284,6 @@ function CustomPosterForm() {
           ...(enhanced.sourceUrl ? { sourceImage: enhanced.sourceUrl } : {}),
         },
       },
-      1,
       selectedSize
     );
     setFile(null);

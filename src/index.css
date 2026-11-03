@@ -554,3 +554,41 @@ select[aria-invalid="true"] {
     animation-duration: 2.6s;
   }
 }
+
+/* The deal supercar: flickering nitro flame and a pulsing neon underglow. */
+@keyframes car-flame {
+  0%,
+  100% {
+    transform: scaleX(1) scaleY(1);
+  }
+  30% {
+    transform: scaleX(0.75) scaleY(1.15);
+  }
+  60% {
+    transform: scaleX(1.2) scaleY(0.9);
+  }
+}
+@keyframes car-glow {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+.car-flame {
+  transform-box: fill-box;
+  transform-origin: right center;
+  animation: car-flame 0.09s linear infinite;
+}
+.car-glow {
+  animation: car-glow 0.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .car-flame,
+  .car-glow {
+    animation: none !important;
+  }
+}
