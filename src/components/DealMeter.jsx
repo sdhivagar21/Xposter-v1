@@ -29,7 +29,7 @@ export default function DealMeter({ className = "" }) {
     headline = `🎉 ${applied.join(" + ")} — you save ₹${saving}`;
     sub = "The best deal for your cart, applied automatically";
   } else {
-    headline = `Add ${toNext} more poster${toNext === 1 ? "" : "s"} — get the cheapest FREE`;
+    headline = `Add ${toNext} more poster${toNext === 1 ? "" : "s"} — get the most affordable one FREE`;
     sub = "Buy 2 Get 1 on every poster, any size";
   }
   const packHint = packDeals

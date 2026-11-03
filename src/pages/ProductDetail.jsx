@@ -217,7 +217,7 @@ export default function ProductDetail() {
             <span className="pb-0.5 text-xs text-white/55">per {selectedSize.label} poster</span>
           </div>
           <p className="mt-1.5 text-xs font-medium text-[var(--xp-accent-bright)]">
-            Add any 3 posters, pay for 2 — the cheapest one is FREE
+            Add any 3 posters, pay for 2 — the most affordable one is FREE
           </p>
 
           <div className="mt-5">
@@ -267,7 +267,7 @@ export default function ProductDetail() {
           {itemCount > 0 && <DealMeter className="mt-4" />}
 
           <div className="mt-4 divide-y divide-[var(--xp-border)] border border-[var(--xp-border)]">
-            <Perk icon="🎁" title="Buy 2 Get 1 FREE" text="Mix any posters & sizes — every 3rd (the cheapest) is free" highlight />
+            <Perk icon="🎁" title="Buy 2 Get 1 FREE" text="Mix any posters & sizes — the most affordable of every 3 is free" highlight />
             <Perk icon="⚡" title="59-min delivery in Chennai" text="₹150 · ₹100 from ₹200 · FREE above ₹300" />
             <Perk icon="🚚" title="Free delivery all over Tamil Nadu" text="Arrives in 3–5 days" />
           </div>

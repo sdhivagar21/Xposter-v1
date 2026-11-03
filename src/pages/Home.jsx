@@ -141,7 +141,7 @@ export default function Home() {
               Get 1 <span className="text-[var(--xp-accent-bright)]">Free</span>
             </h2>
             <p className="mt-3 max-w-sm text-sm text-white/65">
-              Put any 3 posters in your cart and the cheapest one is on us. Mix sizes, mix movies — it applies automatically.
+              Put any 3 posters in your cart and the most affordable one is on us. Mix sizes, mix movies — it applies automatically.
             </p>
             <span className="btn-primary deal-shine relative mt-5 inline-block px-6 py-3 text-sm font-semibold">Grab the deal →</span>
           </div>

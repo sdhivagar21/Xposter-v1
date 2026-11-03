@@ -7,7 +7,7 @@ import SearchOverlay from "./SearchOverlay.jsx";
 
 const TICKER = [
   { text: "Buy 2 Get 1 FREE", hot: true },
-  { text: "The cheapest of every 3 posters is on us" },
+  { text: "The most affordable of every 3 posters is on us" },
   { text: "⚡ 59-min delivery anywhere in Chennai", hot: true },
   { text: "Free delivery all over Tamil Nadu" },
   { text: "5 A4 for ₹375 · 5 A5 for ₹225" },

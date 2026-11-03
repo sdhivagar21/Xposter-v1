@@ -54,7 +54,7 @@ export function packSaving(deal) {
   return Math.max(0, deal.qty * unit - deal.price);
 }
 
-// Buy 2 Get 1: in every group of 3 posters the cheapest one is free. The
+// Buy 2 Get 1: in every group of 3 posters the most affordable one is free. The
 // cart's posters are lined up from most to least expensive and every 3rd one
 // is free. The backend has its own copy and is what actually charges.
 export const BUY2GET1 = { groupSize: 3 };
