@@ -11,6 +11,20 @@ export const CATEGORIES = [
   { slug: "customizable-posters", name: "Customizable Posters" },
 ];
 
+// Catchy headings used on the homepage rows and in the menu.
+export const CATEGORY_TITLES = {
+  "tamil-movies": "Kollywood Mass",
+  "english-movies": "Hollywood Hits",
+  "cars-bikes": "Garage Goals",
+  "marvel-dc": "Superhero HQ",
+  anime: "Anime Alley",
+  cartoon: "Toon Town",
+  motivational: "Grind Mode",
+  sports: "Game Day",
+  "split-posters": "Split & Stack",
+  "customizable-posters": "Your Photo, Our Print",
+};
+
 export function getCategoryName(slug) {
   return CATEGORIES.find((c) => c.slug === slug)?.name ?? slug;
 }

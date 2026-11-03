@@ -1,6 +1,6 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { CATEGORIES, computeCartTotals, getSizeBySlug } from "../data/categories.js";
+import { CATEGORIES, CATEGORY_TITLES, computeCartTotals, getSizeBySlug } from "../data/categories.js";
 import { fetchHomeSections, fetchFeaturedProducts, fetchProducts } from "../api/products.js";
 import CategoryChip from "../components/CategoryChip.jsx";
 import ProductCard from "../components/ProductCard.jsx";
@@ -810,18 +810,7 @@ function BuildWallSheet({ initial, initialPicks, onClose }) {
 }
 
 // Catchy headings for the collection rows (the plain category name sits above).
-const SECTION_TITLES = {
-  "tamil-movies": "Kollywood Mass",
-  "english-movies": "Hollywood Hits",
-  "cars-bikes": "Garage Goals",
-  "marvel-dc": "Superhero HQ",
-  anime: "Anime Alley",
-  cartoon: "Toon Town",
-  motivational: "Grind Mode",
-  sports: "Game Day",
-  "split-posters": "Split & Stack",
-  "customizable-posters": "Your Photo, Our Print",
-};
+const SECTION_TITLES = CATEGORY_TITLES;
 
 // ---------------------------------------------------------------------------
 // Hero: "Build a wall of ___" - the word and the wall photo deck change together.
@@ -939,6 +928,15 @@ export default function Home() {
   const [building, setBuilding] = useState(null);
   const [mood, setMood] = useState(null);
   const shownWalls = mood ? WALLS.filter((w) => w.mood === mood) : WALLS;
+  const location = useLocation();
+  useEffect(() => {
+    const m = new URLSearchParams(location.search).get("mood");
+    if (m && MOODS[m]) setMood(m);
+    const id = location.hash.slice(1);
+    if (!id) return;
+    const t = setTimeout(() => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
+    return () => clearTimeout(t);
+  }, [location.key]); // eslint-disable-line react-hooks/exhaustive-deps
   const heroIndex = useHeroTicker(HERO_PICKS.length);
 
   useEffect(() => {

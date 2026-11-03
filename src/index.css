@@ -646,3 +646,15 @@ select[aria-invalid="true"] {
 @media (prefers-reduced-motion: reduce) {
   .hero-word-in, .hero-underline, .hero-float { animation: none; }
 }
+
+/* Menu drawer: each block slides in after the panel opens */
+@keyframes drawer-item {
+  from { opacity: 0; transform: translateX(-14px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.drawer-item {
+  animation: drawer-item 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .drawer-item { animation: none; }
+}
