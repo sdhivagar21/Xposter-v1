@@ -592,3 +592,57 @@ select[aria-invalid="true"] {
     animation: none !important;
   }
 }
+
+/* Make-your-own-wall layout previews: a pointer clicks each spot and a poster
+   pops in where it clicked (see LayoutPreview in Home.jsx). */
+@keyframes slot-in {
+  0% { opacity: 0; transform: scale(0.55); }
+  60% { opacity: 1; transform: scale(1.08); }
+  100% { opacity: 1; transform: scale(1); }
+}
+.slot-in {
+  animation: slot-in 0.38s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@keyframes cursor-press {
+  0%, 100% { transform: scale(1); }
+  35% { transform: scale(0.78) translate(1px, 1px); }
+}
+.cursor-press {
+  transform-origin: 20% 15%;
+  animation: cursor-press 0.22s ease-out;
+}
+@keyframes click-ripple {
+  from { opacity: 0.9; transform: translate(-50%, -50%) scale(0.2); }
+  to { opacity: 0; transform: translate(-50%, -50%) scale(1.6); }
+}
+.click-ripple {
+  animation: click-ripple 0.5s ease-out both;
+}
+
+/* Hero: rotating "Build a wall of ___" word, its underline, and the floating deck */
+@keyframes hero-word-in {
+  from { opacity: 0; transform: translateY(45%) rotateX(-70deg); filter: blur(6px); }
+  to { opacity: 1; transform: translateY(0) rotateX(0); filter: blur(0); }
+}
+.hero-word-in {
+  display: inline-block;
+  transform-origin: 50% 100%;
+  animation: hero-word-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes hero-underline {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+.hero-underline {
+  animation: hero-underline 0.7s 0.15s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes hero-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.hero-float {
+  animation: hero-float 6s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-word-in, .hero-underline, .hero-float { animation: none; }
+}

@@ -5,9 +5,7 @@ import { readFileSync } from 'node:fs'
 
 // Adds <link rel="preload"> tags at build time for what the first paint
 // needs but the browser can't discover until JS/CSS has run: the two
-// bundled font files and the first poster of the homepage wall (the usual
-// largest-contentful-paint element). Poster URL matches optimizedImage()
-// in src/utils/cloudinaryUrl.js (f_auto,q_28,w_320) so it's a cache hit.
+// bundled font files and the first wall pictures of the homepage hero.
 function preloadCritical() {
   return {
     name: 'preload-critical',
@@ -21,16 +19,14 @@ function preloadCritical() {
           }
         }
         try {
-          const snap = JSON.parse(readFileSync(new URL('./src/data/homeSnapshot.json', import.meta.url), 'utf8'))
-          for (const p of (snap.featured || []).slice(0, 3)) {
-            if (p.image && p.image.includes('/upload/')) {
-              const at = (w) => p.image.replace('/upload/', `/upload/f_auto,q_28,w_${w}/`)
-              // Mirrors the wall's srcset/sizes (PosterWallRow.jsx) so the browser
-              // preloads the same file it will actually pick.
-              tags.push({ tag: 'link', attrs: { rel: 'preload', as: 'image', href: at(320), imagesrcset: [160, 240, 320].map((w) => at(w) + ' ' + w + 'w').join(', '), imagesizes: '(min-width: 640px) 160px, 128px', fetchpriority: 'high' }, injectTo: 'head' })
-            }
+          // First wall pictures in the homepage hero's top row (the usual
+          // largest-contentful-paint element). Mirrors the tiles' srcset/sizes.
+          const walls = JSON.parse(readFileSync(new URL('./src/data/wallSetups.json', import.meta.url), 'utf8')).setups
+          for (const w of walls.filter((_, i) => i % 2 === 0).slice(0, 2)) {
+            const at = (n) => `/walls/${w.slug}-${n}.webp`
+            tags.push({ tag: 'link', attrs: { rel: 'preload', as: 'image', href: at(300), imagesrcset: `${at(300)} 300w, ${at(480)} 480w`, imagesizes: '(min-width: 640px) 224px, 160px', fetchpriority: 'high' }, injectTo: 'head' })
           }
-        } catch { /* no snapshot - skip */ }
+        } catch { /* no wall data - skip */ }
         // Inline the (small) stylesheet so the first paint isn't waiting on a
         // separate render-blocking request.
         const cssFile = Object.keys(ctx.bundle || {}).find((f) => f.endsWith('.css'))

@@ -76,20 +76,25 @@ export default function CartDrawer() {
                   <div className="flex flex-1 flex-col justify-between">
                     <div>
                       <p className="text-sm font-medium">{item.name}</p>
-                      {item.sizeLabel && <p className="text-xs text-white/60">{item.sizeLabel}</p>}
+                      {item.sizeLabel && (
+                        <p className="text-xs text-white/60">
+                          {item.sizeLabel}
+                          {item.split ? ` · split into ${item.split} panels` : ""}
+                        </p>
+                      )}
                     </div>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center border border-[var(--xp-border-strong)]">
                         <button
-                          onClick={() => updateQty(item.key, item.qty - 1)}
+                          onClick={() => updateQty(item.key, item.qty - (item.split || 1))}
                           className="h-7 w-7 text-sm transition-colors hover:text-[var(--xp-accent-bright)]"
                           aria-label={`Decrease quantity of ${item.name}`}
                         >
                           −
                         </button>
-                        <span className="w-8 text-center text-sm">{item.qty}</span>
+                        <span className="w-8 text-center text-sm">{item.split ? `${item.qty / item.split}×` : item.qty}</span>
                         <button
-                          onClick={() => updateQty(item.key, item.qty + 1)}
+                          onClick={() => updateQty(item.key, item.qty + (item.split || 1))}
                           className="h-7 w-7 text-sm transition-colors hover:text-[var(--xp-accent-bright)]"
                           aria-label={`Increase quantity of ${item.name}`}
                         >

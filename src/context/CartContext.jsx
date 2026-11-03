@@ -24,10 +24,13 @@ export function CartProvider({ children }) {
   // `size` is one of the entries from src/data/sizes.js ({slug, label, price}).
   // Falls back to the smallest size if none is given, so any call site that
   // doesn't pass one explicitly still works.
+  // `product.split` (2 or 3) means one poster printed as that many side-by-side
+  // panels: it's its own cart line, priced per panel, and `qty` counts panels.
   function addToCart(product, qty = 1, size) {
     const chosenSize = size || SIZES[0];
+    const split = product.split || 0;
     setItems((prev) => {
-      const key = `${product.id}-${chosenSize.slug}`;
+      const key = `${product.id}-${chosenSize.slug}${split ? `-split${split}` : ""}`;
       const existing = prev.find((i) => i.key === key);
       if (existing) {
         return prev.map((i) => (i.key === key ? { ...i, qty: i.qty + qty } : i));
@@ -45,8 +48,43 @@ export function CartProvider({ children }) {
           price: chosenSize.price,
           qty,
           ...(product.custom ? { custom: product.custom } : {}),
+          ...(split ? { split } : {}),
         },
       ];
+    });
+    setDrawerOpen(true);
+  }
+
+  // A whole wall in one go: every poster (split ones as their panels), then
+  // the cart opens once.
+  function addManyToCart(entries) {
+    setItems((prev) => {
+      let next = prev;
+      for (const { product, size } of entries) {
+        const split = product.split || 0;
+        const qty = split || 1;
+        const key = `${product.id}-${size.slug}${split ? `-split${split}` : ""}`;
+        const existing = next.find((i) => i.key === key);
+        next = existing
+          ? next.map((i) => (i.key === key ? { ...i, qty: i.qty + qty } : i))
+          : [
+              ...next,
+              {
+                key,
+                id: product.id,
+                name: product.name,
+                image: product.image,
+                category: product.category,
+                size: size.slug,
+                sizeLabel: size.label,
+                price: size.price,
+                qty,
+                ...(product.custom ? { custom: product.custom } : {}),
+                ...(split ? { split } : {}),
+              },
+            ];
+      }
+      return next;
     });
     setDrawerOpen(true);
   }
@@ -93,6 +131,7 @@ export function CartProvider({ children }) {
   const value = {
     items,
     addToCart,
+    addManyToCart,
     updateQty,
     removeFromCart,
     clearCart,

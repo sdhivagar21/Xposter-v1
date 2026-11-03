@@ -70,7 +70,8 @@ export default function Checkout() {
       // Custom posters have no product record - they carry their hosted
       // image id, pixel size and notes instead.
       ...(item.custom ? item.custom : { product: item.id }),
-      name: item.name,
+      // Split posters: tell the print team how many panels to cut it into.
+      name: item.split ? `${item.name} (split into ${item.split} panels)` : item.name,
       price: item.price,
       image: item.image,
       size: item.size,
@@ -240,7 +241,8 @@ export default function Checkout() {
             {items.map((item) => (
               <li key={item.key} className="flex justify-between text-sm">
                 <span className="text-white/70">
-                  {item.name} {item.sizeLabel ? `(${item.sizeLabel}) ` : ""}× {item.qty}
+                  {item.name} {item.sizeLabel ? `(${item.sizeLabel}) ` : ""}
+                  {item.split ? `· split, ${item.qty} panels` : `× ${item.qty}`}
                 </span>
                 <span>₹{item.qty * item.price}</span>
               </li>
