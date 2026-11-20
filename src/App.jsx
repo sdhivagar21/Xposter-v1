@@ -1,5 +1,5 @@
-import { Suspense, lazy, useEffect, useState } from "react";
-import { Routes, Route, Link } from "react-router-dom";
+import { Suspense, lazy, useEffect, useRef, useState } from "react";
+import { Routes, Route, Link, useLocation } from "react-router-dom";
 import Header from "./components/Header.jsx";
 import Footer from "./components/Footer.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
@@ -173,6 +173,20 @@ function CustomerShell({ children }) {
 }
 
 export default function App() {
+  // Meta Pixel: index.html already sends a PageView on the first load. The site
+  // switches pages without reloading, so send one more for each page change
+  // after that (admin pages are skipped - they aren't shopper visits).
+  const { pathname, search } = useLocation();
+  const firstPage = useRef(true);
+  useEffect(() => {
+    if (firstPage.current) {
+      firstPage.current = false;
+      return;
+    }
+    if (pathname.startsWith("/admin")) return;
+    if (typeof window.fbq === "function") window.fbq("track", "PageView");
+  }, [pathname, search]);
+
   return (
     <>
       <ScrollToTop />
