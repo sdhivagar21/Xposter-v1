@@ -43,7 +43,6 @@ export default function Footer() {
         </div>
         <div className="mt-12 flex items-center justify-between border-t border-[var(--xp-border)] pt-6 text-xs text-white/55">
           <span>© {new Date().getFullYear()} XPOSTERS. All rights reserved.</span>
-          <Link to="/admin/login" className="transition-colors hover:text-white/60">Admin</Link>
         </div>
       </div>
     </footer>
